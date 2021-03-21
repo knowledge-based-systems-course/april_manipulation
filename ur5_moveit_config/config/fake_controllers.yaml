@@ -1,0 +1,18 @@
+controller_list:
+  - name: fake_arm_controller
+    joints:
+      - $(arg prefix)ur5_shoulder_pan_joint
+      - $(arg prefix)ur5_shoulder_lift_joint
+      - $(arg prefix)ur5_elbow_joint
+      - $(arg prefix)ur5_wrist_1_joint
+      - $(arg prefix)ur5_wrist_2_joint
+      - $(arg prefix)ur5_wrist_3_joint
+  - name: fake_gripper_controller
+    joints:
+      - $(arg prefix)gripper_finger_joint
+
+initial:
+  - group: arm
+    pose: home
+  - group: gripper
+    pose: open
