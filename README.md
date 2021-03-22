@@ -2,17 +2,18 @@
 
 Functionality:
 
-- moveit configuration for ur5 arm
+- moveit configuration for mia_hand_on_ur5 robot
+- moveit configuration for ur5 robot
 
 # Run instructions
 
+Configure environment:
+
+        export ROBOT=mia_hand_on_ur5
+
 Run bringup:
 
-        roslaunch april_robot_bringup_sim robot_mia_hand_on_ur5.launch
-
-Run trajectory controller:
-
-        roslaunch april_robot_bringup_sim mia_hand_on_ur5_traj_ros_control.launch
+        roslaunch april_robot_bringup robot.launch sim:=true
 
 unpause physics:
 
@@ -20,7 +21,7 @@ unpause physics:
 
 Launch move group:
 
-        roslaunch april_robot_bringup_sim mia_hand_on_ur5_traj_ros_control.launch
+        roslaunch mia_hand_on_ur5_moveit_config move_group.launch
 
 run moveit commander:
 
@@ -30,5 +31,6 @@ type interactively in the moveit commander terminal:
 
         use arm
         go home
+        go up
 
 Done, arm should move now
