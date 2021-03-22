@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: april_robot_description
+    relative_path: urdf/mia_hand_on_ur5.urdf.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/mia_hand_on_ur5.srdf
+  CONFIG:
+    author_name: Oscar Lima
+    author_email: oscar.lima@dfki.de
+    generated_timestamp: 1616442665
