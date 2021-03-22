@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: april_robot_description
+    relative_path: urdf/ur5.urdf.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/ur5.srdf.xacro
+  CONFIG:
+    author_name: Martin Günther
+    author_email: martin.guenther@dfki.de
+    generated_timestamp: 1616438694
