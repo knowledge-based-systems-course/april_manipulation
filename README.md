@@ -15,10 +15,6 @@ Run bringup:
 
         roslaunch april_robot_bringup robot.launch sim:=true
 
-unpause physics:
-
-        rosservice call /gazebo/unpause_physics "{}"
-
 Launch move group:
 
         roslaunch mia_hand_on_ur5_moveit_config move_group.launch
