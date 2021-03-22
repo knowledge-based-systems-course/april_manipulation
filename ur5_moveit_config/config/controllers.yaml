@@ -1,6 +1,6 @@
 controller_manager_ns: ""
 controller_list:
-  - name: ur5_traj_controller
+  - name: ur5_trajectory_controller
     action_ns: follow_joint_trajectory
     type: FollowJointTrajectory
     default: true

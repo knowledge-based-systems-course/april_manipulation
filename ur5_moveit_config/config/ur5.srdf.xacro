@@ -3,7 +3,7 @@
     This is a format for representing semantic information about the robot structure.
     A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
 -->
-<robot xmlns:xacro="http://ros.org/wiki/xacro" name="mia_hand_on_ur5">
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="ur5">
 
     <!-- Use the arg tf_prefix to set the tf_prefix property. Use a dummy tf_prefix_ property to avoid a leading / if
          the prefix is not set, without using eval (which is not supported on indigo). -->
