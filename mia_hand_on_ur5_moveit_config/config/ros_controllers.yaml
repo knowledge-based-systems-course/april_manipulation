@@ -15,12 +15,12 @@ hardware_interface:
     - ur5_wrist_1_joint
     - ur5_wrist_2_joint
     - ur5_wrist_3_joint
+    - jMCP1
     - jMCP2
     - jMCP3
     - jMCP4
     - jMCP5
     - jmetacarpus
-    - jMCP1
   sim_control_mode: 1  # 0: position, 1: velocity
 # Publish all joint states
 # Creates the /joint_states topic necessary in ROS
@@ -39,3 +39,14 @@ controller_list:
       - ur5_wrist_1_joint
       - ur5_wrist_2_joint
       - ur5_wrist_3_joint
+  - name: mia_hand_trajectory_controller
+    action_ns: follow_joint_trajectory
+    default: True
+    type: FollowJointTrajectory
+    joints:
+      - jMCP1
+      - jMCP2
+      - jMCP3
+      - jMCP4
+      - jMCP5
+      - jmetacarpus
