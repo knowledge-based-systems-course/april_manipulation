@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- pick demo using moveit -->
+
+  <!-- fake object recognition -->
+  <node pkg="fake_object_recognition" type="object_recognition_mockup.py" name="object_recognition" output="screen" >
+    <param name="box_width" type="double" value="1.39" />
+    <param name="box_length" type="double" value="0.85" />
+    <param name="box_height" type="double" value="0.5" />
+    
+    <param name="x_box_position" type="double" value="0.06" />
+    <param name="y_box_position" type="double" value="0.69" />
+    <param name="z_box_position" type="double" value="1.2" />
+  </node>
+
+  <!-- moveit move group -->
+  <arg name="use_pointcloud" default="true"/>
+  <include file="$(find mia_hand_on_ur5_moveit_config)/launch/move_group.launch" >
+    <arg name="use_pointcloud" value="$(arg use_pointcloud)"/>
+  </include>
+
+</launch>

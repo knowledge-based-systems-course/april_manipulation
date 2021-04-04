@@ -1,0 +1,46 @@
+# Picking parameters
+
+# the name of the arm kinematic chain group given when moveit was configured
+arm_group_name: arm
+
+# the joint angle value of the gripper when its closed
+gripper_close:
+    - 0.519452693380452    # jMCP1
+    - 1.1400008180683203   # jMCP2
+    - 1.2338366838809431   # jMCP3
+    - 1.2450002736491905   # jMCP4
+    - 1.0580001977880231   # jMCP5
+    - 0.8479223825326363   # jmetacarpus
+
+# the joint angle value of the gripper when its open
+gripper_open:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+
+# the list of names of the gripper joint
+gripper_joint_names:
+    - jMCP1
+    - jMCP2
+    - jMCP3
+    - jMCP4
+    - jMCP5
+    - jmetacarpus
+
+# the list of max torque values to apply while closing the gripper around the object
+gripper_joint_efforts:
+    - 10.0
+    - 10.0
+    - 10.0
+    - 10.0
+    - 10.0
+    - 10.0
+
+# how many attempts moveit will make to compute a graping plan
+pick_attempts: 5
+
+# the detected object bounding box will be enlarged by adding this value to its 3 dimensions (in meters)
+object_padding: -0.07 # enlarge object bounding box by adding 4 cm in length, width and height

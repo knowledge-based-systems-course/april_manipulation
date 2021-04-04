@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>april_pick_place_object</name>
+  <version>0.0.1</version>
+  <description>pick and place objects using moveit, currently only pick is available and is under development</description>
+
+  <maintainer email="oscar@todo.todo">Oscar Lima</maintainer>
+
+  <license>BSD</license>
+
+  <author email="oscar.lima@dfki.de">Oscar Lima</author> 
+
+  <!-- Use depend as a shortcut for packages that are both build and exec dependencies -->
+  <!--   <depend>roscpp</depend> -->
+
+  <!-- Use build_depend for packages you need at compile time: -->
+  <!--   <build_depend>message_generation</build_depend> -->
+
+  <!-- Use exec_depend for packages you need at runtime: -->
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>moveit_commander</exec_depend>
+  <exec_depend>tf</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>moveit_msgs</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
+  <exec_depend>cob_perception_msgs</exec_depend>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>
