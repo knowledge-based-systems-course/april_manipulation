@@ -13,15 +13,25 @@
         <chain base_link="ur5_base_link" tip_link="hand_ee_link"/>
     </group>
     <group name="hand">
-        <joint name="jMCP1"/>
+        <link name="MCP1"/>
+        <link name="MCP2"/>
+        <link name="MCP3"/>
+        <link name="MCP4"/>
+        <link name="MCP5"/>
+        <link name="index_finger_sensor"/>
+        <link name="metacarpus"/>
+        <link name="middle_finger_sensor"/>
+        <link name="thumb_sensor"/>
+        <link name="wrist"/>
+        <link name="hand_ee_link"/>
+        <!--<joint name="jMCP1"/>
         <joint name="jMCP2"/>
         <joint name="jMCP3"/>
         <joint name="jMCP4"/>
         <joint name="jMCP5"/>
-        <joint name="jmetacarpus"/>
+        <joint name="jmetacarpus"/>-->
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
-    <!-- ARM -->
     <group_state name="up" group="arm">
         <joint name="ur5_elbow_joint" value="0"/>
         <joint name="ur5_shoulder_lift_joint" value="-1.57"/>
@@ -46,35 +56,40 @@
         <joint name="ur5_wrist_2_joint" value="0.24"/>
         <joint name="ur5_wrist_3_joint" value="1.83"/>
     </group_state>
-    <!-- HAND -->
-    <!--moveit order : [jMCP2, jMCP3, jMCP4, jMCP5, jmetacarpus, jMCP1]-->
     <group_state name="open" group="hand">
-        <joint name="jMCP1" value="0.0" />
-        <joint name="jMCP2" value="0.0" />
-        <joint name="jMCP3" value="0.0" />
-        <joint name="jMCP4" value="0.0" />
-        <joint name="jMCP5" value="0.0" />
-        <joint name="jmetacarpus" value="0.0" />
+        <joint name="jMCP1" value="0"/>
+        <joint name="jMCP2" value="0"/>
+        <joint name="jMCP3" value="0"/>
+        <joint name="jMCP4" value="0"/>
+        <joint name="jMCP5" value="0"/>
+        <joint name="jmetacarpus" value="0"/>
     </group_state>
     <group_state name="close" group="hand">
-        <joint name="jMCP1" value="0.519452693380452" />
-        <joint name="jMCP2" value="1.1400008180683203" />
-        <joint name="jMCP3" value="1.2338366838809431" />
-        <joint name="jMCP4" value="1.2450002736491905" />
-        <joint name="jMCP5" value="1.0580001977880231" />
-        <joint name="jmetacarpus" value="0.8479223825326363" />
+        <joint name="jMCP1" value="0.519453"/>
+        <joint name="jMCP2" value="1.14"/>
+        <joint name="jMCP3" value="1.23384"/>
+        <joint name="jMCP4" value="1.245"/>
+        <joint name="jMCP5" value="1.058"/>
+        <joint name="jmetacarpus" value="0.847922"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="end_effector" parent_link="hand_ee_link" group="hand" />
+    <end_effector name="end_effector" parent_link="hand_ee_link" group="hand"/>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <!--<virtual_joint name="virtual_joint" type="floating" parent_frame="world" child_link="?" />-->
+    
+    <!-- BUG: Skipping virtual joint 'virtual_joint1' because its child frame 'arm_base' does not match the URDF frame 'world'-->
+    <!-- related issue: https://github.com/ros-industrial/universal_robot/pull/284 -->
+    <!--<virtual_joint name="virtual_joint1" type="fixed" parent_frame="world" child_link="ur5_base_link" />-->
+    <!--<virtual_joint name="virtual_joint2" type="fixed" parent_frame="arm_base" child_link="ur5_base_link" />-->
+    <!--<virtual_joint name="virtual_joint2" type="fixed" parent_frame="world" child_link="ur5_base_link" />-->
+
+    <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="world" />
+
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="MCP1" link2="metacarpus" reason="Adjacent"/>
     <disable_collisions link1="MCP1" link2="ur5_ee_link" reason="Never"/>
     <disable_collisions link1="MCP1" link2="ur5_wrist_1_link" reason="Never"/>
     <disable_collisions link1="MCP1" link2="ur5_wrist_2_link" reason="Never"/>
     <disable_collisions link1="MCP1" link2="ur5_wrist_3_link" reason="Never"/>
-    <disable_collisions link1="MCP1" link2="wrist" reason="Default"/>
     <disable_collisions link1="MCP2" link2="MCP3" reason="Never"/>
     <disable_collisions link1="MCP2" link2="MCP4" reason="Never"/>
     <disable_collisions link1="MCP2" link2="MCP5" reason="Never"/>

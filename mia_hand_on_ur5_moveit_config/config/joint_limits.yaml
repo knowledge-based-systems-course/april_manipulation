@@ -2,69 +2,97 @@
 
 # For beginners, we downscale velocity and acceleration limits.
 # You can always specify higher scaling factors (<= 1.0) in your motion requests.  # Increase the values below to 1.0 to always move at maximum speed.
-default_velocity_scaling_factor: 1.0
-default_acceleration_scaling_factor: 1.0
+#default_velocity_scaling_factor: 1.0
+#default_acceleration_scaling_factor: 1.0
 
 # Specific joint properties can be changed with the keys [max_position, min_position, max_velocity, max_acceleration]
 # Joint limits can be turned off with [has_velocity_limits, has_acceleration_limits]
 joint_limits:
-  jMCP1:
-    has_velocity_limits: true
-    max_velocity: 100
-    has_acceleration_limits: false
-    max_acceleration: 0
-  jMCP2:
-    has_velocity_limits: true
-    max_velocity: 100
-    has_acceleration_limits: false
-    max_acceleration: 0
-  jMCP3:
-    has_velocity_limits: true
-    max_velocity: 100
-    has_acceleration_limits: false
-    max_acceleration: 0
-  jMCP4:
-    has_velocity_limits: true
-    max_velocity: 100
-    has_acceleration_limits: false
-    max_acceleration: 0
-  jMCP5:
-    has_velocity_limits: true
-    max_velocity: 100
-    has_acceleration_limits: false
-    max_acceleration: 0
-  jmetacarpus:
-    has_velocity_limits: true
-    max_velocity: 100
-    has_acceleration_limits: false
-    max_acceleration: 0
-  ur5_elbow_joint:
-    has_velocity_limits: true
-    max_velocity: 3.15
-    has_acceleration_limits: false
-    max_acceleration: 0
-  ur5_shoulder_lift_joint:
-    has_velocity_limits: true
-    max_velocity: 3.15
-    has_acceleration_limits: false
-    max_acceleration: 0
+  default_velocity_scaling_factor: 0.6 # previously was up, TODO check!
+  default_acceleration_scaling_factor: 0.6 # previously was up, TODO check!
+  # ARM
   ur5_shoulder_pan_joint:
+    max_position: 0.7853981633974483
+    min_position: -3.9269908169872414
     has_velocity_limits: true
-    max_velocity: 3.15
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 0.45
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+  ur5_shoulder_lift_joint:
+    max_position: 0.82
+    min_position: -3.961592653589793
+    has_velocity_limits: true
+    max_velocity: 0.45
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+  ur5_elbow_joint:
+    max_position: 3.14
+    min_position: -3.14
+    has_velocity_limits: true
+    max_velocity: 0.45
+    has_acceleration_limits: true
+    max_acceleration: 1.0
   ur5_wrist_1_joint:
+    max_position: 3.14
+    min_position: -3.14
     has_velocity_limits: true
-    max_velocity: 3.2
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 0.45
+    has_acceleration_limits: true
+    max_acceleration: 1.0
   ur5_wrist_2_joint:
+    max_position: 3.14
+    min_position: -3.14
     has_velocity_limits: true
-    max_velocity: 3.2
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 0.45
+    has_acceleration_limits: true
+    max_acceleration: 1.0
   ur5_wrist_3_joint:
+    max_position: 5.497787143782138    # 1.75 * pi (315 deg)
+    min_position: -0.7853981633974483   # 0.25 * pi (45 deg)
     has_velocity_limits: true
-    max_velocity: 3.2
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 0.45
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+  # HAND
+  jMCP1:
+    max_position: 1.5708
+    min_position: 0.0
+    has_velocity_limits: true
+    max_velocity: 1.0
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+  jMCP2:
+    max_position: 1.5
+    min_position: 0.0
+    has_velocity_limits: true
+    max_velocity: 1.0
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+  jMCP3:
+    max_position: 1.45
+    min_position: 0.0
+    has_velocity_limits: true
+    max_velocity: 1.0
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+  jMCP4:
+    max_position: 1.5
+    min_position: 0.0
+    has_velocity_limits: true
+    max_velocity: 1.0
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+  jMCP5:
+    max_position: 1.5
+    min_position: -0.2
+    has_velocity_limits: true
+    max_velocity: 1.0
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+  jmetacarpus:
+    max_position: 1.5708
+    min_position: 0.0
+    has_velocity_limits: true
+    max_velocity: 1.0
+    has_acceleration_limits: true
+    max_acceleration: 1.0

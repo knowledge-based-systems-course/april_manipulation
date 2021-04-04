@@ -1,3 +1,9 @@
 <launch>
 
+  <!-- whether to use the pointcloud (on Gazebo) or depthimage (on real robot) octomap updater -->
+  <arg name="use_pointcloud" default="false"/>
+
+  <!-- sensors used to update the map -->
+  <rosparam if="$(arg use_pointcloud)" command="load" file="$(find mia_hand_on_ur5_moveit_config)/config/sensors_3d.yaml" />
+
 </launch>
