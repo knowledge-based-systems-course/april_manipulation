@@ -5,25 +5,7 @@ arm_group_name: arm
 
 # how accurate you want a cartesian pose to be achieved
 # if set too low IK is likely to fail, if set too high arm will not reach accurately
-arm_goal_tolerance: 0.01
-
-# the joint angle value of the gripper when its closed
-gripper_close:
-    - 0.519452693380452    # jMCP1
-    - 1.1400008180683203   # jMCP2
-    - 1.2338366838809431   # jMCP3
-    - 1.2450002736491905   # jMCP4
-    - 1.0580001977880231   # jMCP5
-    - 0.8479223825326363   # jmetacarpus
-
-# the joint angle value of the gripper when its open
-gripper_open:
-    - 0.0
-    - 0.0
-    - 0.0
-    - 0.0
-    - 0.0
-    - 0.0
+arm_goal_tolerance: 0.01   # default: 0.01
 
 # the list of names of the gripper joint
 gripper_joint_names:
@@ -34,6 +16,24 @@ gripper_joint_names:
     - jMCP5
     - jmetacarpus
 
+# the joint angle value of the gripper when its closed
+gripper_close:
+    - 0.40   # jMCP1 (thumb extension/flexion)
+    - 1.17   # jMCP2 (index)
+    - 1.21   # jMCP3 (middle)
+    - 1.19   # jMCP4 (ring)
+    - 1.03   # jMCP5 (little)
+    - 0.73   # jmetacarpus (thumb abduction/adduction)
+
+# the joint angle value of the gripper when its open
+gripper_open:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.73
+
 # the list of max torque values to apply while closing the gripper around the object
 gripper_joint_efforts:
     - 10.0
@@ -43,8 +43,26 @@ gripper_joint_efforts:
     - 10.0
     - 10.0
 
+# The estimated probability of success for this grasp, or some other measure of how 'good' it is.
+grasp_quality: 1.0
+
 # how many attempts moveit will make to compute a graping plan
-pick_attempts: 5
+pick_attempts: 10   # default: 10
 
 # the detected object bounding box will be enlarged by adding this value to its 3 dimensions (in meters)
-object_padding: -0.07 # enlarge object bounding box by adding 4 cm in length, width and height
+# object_padding: -0.07 # enlarge object bounding box by adding 4 cm in length, width and height
+object_padding: 0.0
+
+# The approach direction to take before picking an object
+# values are expressed w.r.t end_effector reference frame
+pre_grasp_approach:
+    min_dist: 0.08
+    desired: 0.25
+    axis: [0.0, 0.0, 1.0] # side grasp, approach in "z" axis to object
+
+# The retreat direction to take after a grasp has been completed (object is attached)
+post_grasp_retreat:
+    frame_id: 'world'
+    min_dist: 0.1
+    desired: 0.15
+    axis: [0.0, 0.0, 1.0] # lift object up in "z" direction
