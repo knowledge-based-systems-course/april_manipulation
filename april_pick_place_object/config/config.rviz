@@ -5,7 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /TF1/Frames1
-        - /perception1
+        - /manipulation1
       Splitter Ratio: 0.5764411091804504
     Tree Height: 1079
   - Class: rviz/Selection
@@ -52,7 +52,7 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    - Alpha: 1
+    - Alpha: 0.699999988079071
       Class: rviz/RobotModel
       Collision Enabled: false
       Enabled: true
@@ -286,164 +286,168 @@ Visualization Manager:
           Value: false
       Enabled: true
       Name: perception
+    - Class: rviz/Group
+      Displays:
+        - Alpha: 1
+          Axes Length: 0.20000000298023224
+          Axes Radius: 0.009999999776482582
+          Class: rviz/Pose
+          Color: 255; 25; 0
+          Enabled: true
+          Head Length: 0.30000001192092896
+          Head Radius: 0.10000000149011612
+          Name: grasp_pose
+          Queue Size: 10
+          Shaft Length: 1
+          Shaft Radius: 0.05000000074505806
+          Shape: Axes
+          Topic: /pick_object_node/visualisation/grasp_pose
+          Unreliable: false
+          Value: true
+        - Class: moveit_rviz_plugin/PlanningScene
+          Enabled: true
+          Move Group Namespace: ""
+          Name: PlanningScene
+          Planning Scene Topic: move_group/monitored_planning_scene
+          Robot Description: robot_description
+          Scene Geometry:
+            Scene Alpha: 0.8999999761581421
+            Scene Color: 50; 230; 50
+            Scene Display Time: 0.009999999776482582
+            Show Scene Geometry: true
+            Voxel Coloring: Z-Axis
+            Voxel Rendering: Occupied Voxels
+          Scene Robot:
+            Attached Body Color: 150; 50; 150
+            Links:
+              All Links Enabled: true
+              Expand Joint Details: false
+              Expand Link Details: false
+              Expand Tree: false
+              Link Tree Style: Links in Alphabetic Order
+              MCP1:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              MCP2:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              MCP3:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              MCP4:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              MCP5:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              arm_base:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              hand_ee_link:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+              index_finger_sensor:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              metacarpus:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              middle_finger_sensor:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              thumb_sensor:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+              ur5_base:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+              ur5_base_link:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              ur5_ee_link:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              ur5_forearm_link:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              ur5_shoulder_link:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              ur5_tool0:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+              ur5_upper_arm_link:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              ur5_wrist_1_link:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              ur5_wrist_2_link:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              ur5_wrist_3_link:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+              world:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+              wrist:
+                Alpha: 1
+                Show Axes: false
+                Show Trail: false
+                Value: true
+            Robot Alpha: 1
+            Show Robot Collision: false
+            Show Robot Visual: true
+          Value: true
+      Enabled: true
+      Name: manipulation
     - Alpha: 1
       Class: rviz/Axes
       Enabled: true
-      Length: 1
+      Length: 0.30000001192092896
       Name: fixed frame
-      Radius: 0.10000000149011612
+      Radius: 0.019999999552965164
       Reference Frame: <Fixed Frame>
-      Value: true
-    - Class: moveit_rviz_plugin/PlanningScene
-      Enabled: true
-      Move Group Namespace: ""
-      Name: PlanningScene
-      Planning Scene Topic: move_group/monitored_planning_scene
-      Robot Description: robot_description
-      Scene Geometry:
-        Scene Alpha: 0.8999999761581421
-        Scene Color: 50; 230; 50
-        Scene Display Time: 0.009999999776482582
-        Show Scene Geometry: true
-        Voxel Coloring: Z-Axis
-        Voxel Rendering: Occupied Voxels
-      Scene Robot:
-        Attached Body Color: 150; 50; 150
-        Links:
-          All Links Enabled: true
-          Expand Joint Details: false
-          Expand Link Details: false
-          Expand Tree: false
-          Link Tree Style: Links in Alphabetic Order
-          MCP1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          MCP2:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          MCP3:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          MCP4:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          MCP5:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_base:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          hand_ee_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          index_finger_sensor:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          metacarpus:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          middle_finger_sensor:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          thumb_sensor:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          ur5_base:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          ur5_base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ur5_ee_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ur5_forearm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ur5_shoulder_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ur5_tool0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          ur5_upper_arm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ur5_wrist_1_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ur5_wrist_2_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ur5_wrist_3_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          world:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          wrist:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-        Robot Alpha: 1
-        Show Robot Collision: false
-        Show Robot Visual: true
-      Value: true
-    - Alpha: 1
-      Axes Length: 0.20000000298023224
-      Axes Radius: 0.009999999776482582
-      Class: rviz/Pose
-      Color: 255; 25; 0
-      Enabled: true
-      Head Length: 0.30000001192092896
-      Head Radius: 0.10000000149011612
-      Name: grasp_pose
-      Queue Size: 10
-      Shaft Length: 1
-      Shaft Radius: 0.05000000074505806
-      Shape: Axes
-      Topic: /pick_object_node/visualisation/grasp_pose
-      Unreliable: false
       Value: true
   Enabled: true
   Global Options:
@@ -473,7 +477,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.893155813217163
+      Distance: 4.042715072631836
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -481,17 +485,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.229666605591774
-        Y: 0.14290285110473633
-        Z: 0.6306503415107727
+        X: -0.20268332958221436
+        Y: 0.4434197247028351
+        Z: 0.5978837013244629
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.610398530960083
+      Pitch: 0.550398588180542
       Target Frame: <Fixed Frame>
-      Yaw: 0.8903996348381042
+      Yaw: 0.8004024028778076
     Saved: ~
 Window Geometry:
   Displays:
