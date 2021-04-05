@@ -21,6 +21,7 @@ class PickTools():
 
         # parameters
         arm_group_name = rospy.get_param('~arm_group_name', 'arm')
+        arm_goal_tolerance = rospy.get_param('~arm_goal_tolerance', 0.01)
         gripper_close = rospy.get_param('~gripper_close', None)
         gripper_open = rospy.get_param('~gripper_open', None)
         self.gripper_joint_names = rospy.get_param('~gripper_joint_names', None)
@@ -45,6 +46,7 @@ class PickTools():
 
         self.robot = moveit_commander.RobotCommander()
         self.arm = moveit_commander.MoveGroupCommander(arm_group_name, wait_for_servers=10.0)
+        self.arm.set_goal_tolerance(arm_goal_tolerance)
         self.scene = PlanningSceneInterface()
 
         # setup publishers for visualisation purposes
@@ -215,17 +217,17 @@ class PickTools():
         # rosrun tf tf_echo world hand_ee_link
         target_pose = PoseStamped()
 
-        # near object
-        # translation = [0.045, 0.806, 1.198]
-        # rotation = [-0.474, 0.814, 0.078, 0.326]
+        # object in cartesian coordinates (is also recorded as "object" posture in srdf)
+        translation = [-0.009323, 0.665396, 1.162619]
+        rotation = [-0.351800, 0.511656, -0.391641, -0.679014]
 
         # home posture in cartesian coordinates
-        translation = [-0.289, 0.155, 1.592]
-        rotation = [-0.612, 0.685, 0.190, 0.346]
+        #translation = [-0.288703, 0.154675, 1.592202]
+        #rotation = [0.612385, -0.684744, -0.190438, -0.346182]
 
         # current pose, when doing bringup arm is already there
-        # translation = [-0.596, -0.291, 1.481]
-        # rotation = [0.703, -0.082, -0.702, -0.081]
+        #translation = [-0.596009, -0.291193, 1.481584]
+        #rotation = [-0.703003, 0.082303, 0.701726, 0.081197]
 
         rospy.loginfo(f'planning frame : {self.arm.get_planning_frame()}')
         target_pose.header.frame_id =     self.arm.get_planning_frame() # 'world'
@@ -339,5 +341,5 @@ class PickTools():
 if __name__=='__main__':
     rospy.init_node('pick_object_node', anonymous=True)
     pick = PickTools()
-    # pick.start_pick_node()
+    #pick.start_pick_node()
     pick.test_going_to_cartesian_pose()
