@@ -10,23 +10,67 @@ import geometry_msgs.msg
 import std_msgs.msg
 
 from visualization_msgs.msg import Marker, MarkerArray
+from geometry_msgs.msg import PoseArray
 
 class GripperVisualiser:
+    '''
+    Allows to place the gripper in multiple poses via rviz, using marker array msgs and robot mesh
+    TODO: read from urdf model, currently only mia hand gripper is available
+    '''
     def __init__(self):
         # parameters
+        # the transparency of the mesh, if 1.0 no transparency is set
         self.alpha = 0.5
+        self.global_reference_frame = 'world'
 
+        # publish marker array to rviz for visualising the gripper
         self.marker_array_pub = rospy.Publisher('gripper', MarkerArray, queue_size=1)
+        # subscribe to pose array to place the gripper in multiple locations
+        rospy.Subscriber('/pose_generator_node/poses', PoseArray, self.poseArrayCB)
         rospy.sleep(0.5)
-        self.marker_array_msg = self.make_marker_array_msg()
+        self.listener = tf.TransformListener()
+        self.tf_gripper_to_world = None
 
-    def publish_gripper(self, position):
-        #marker.header.stamp = rospy.Time.now()
-        self.marker_array_pub.publish(self.marker_array_msg)
+    def get_tf_pose_array_wrt_global(self, frame_id):
+        try:
+            (trans, rot) = self.listener.lookupTransform(self.global_reference_frame, frame_id, rospy.Time(0))
+            euler_rot = tf.transformations.euler_from_quaternion(rot)
+            tf_gripper_to_world = tf.transformations.euler_matrix(euler_rot[0], euler_rot[1], euler_rot[2])
+            tf_gripper_to_world[0][3] = trans[0] # x
+            tf_gripper_to_world[1][3] = trans[1] # y
+            tf_gripper_to_world[2][3] = trans[2] # z
+            self.tf_gripper_to_world = tf_gripper_to_world
+            return True
+        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            rospy.logwarn(f'failed to find transform from {self.global_reference_frame} to {frame_id} , will retry')
+        return False
+
+    def poseArrayCB(self, msg):
+        for i in range(5): # try 5 times to query tf
+            if self.get_tf_pose_array_wrt_global(msg.header.frame_id):
+                rospy.loginfo('tf listener was able to find transform')
+                for pose in msg.poses:
+                    rot = []
+                    rot.append(pose.orientation.x)
+                    rot.append(pose.orientation.y)
+                    rot.append(pose.orientation.z)
+                    rot.append(pose.orientation.w)
+                    euler_rot = tf.transformations.euler_from_quaternion(rot)
+                    tf_pose_to_posearrayorigin = tf.transformations.euler_matrix(euler_rot[0], euler_rot[1], euler_rot[2])
+                    tf_pose_to_posearrayorigin[0][3] = pose.position.x # x
+                    tf_pose_to_posearrayorigin[1][3] = pose.position.y # y
+                    tf_pose_to_posearrayorigin[2][3] = pose.position.z # z
+                    self.tf_pose_to_posearrayorigin = tf_pose_to_posearrayorigin
+                    self.marker_array_msg = self.make_marker_array_msg()
+                    # marker.header.stamp = rospy.Time.now()
+                    self.marker_array_pub.publish(self.marker_array_msg)
+                break
+            else:
+                rospy.sleep(0.3)
 
     def make_marker_msg(self, mesh, position, orientation):
         marker = Marker()
-        marker.header.frame_id = 'fake_hand_ee_link'
+        marker.header.frame_id = self.global_reference_frame
         marker.type = Marker.MESH_RESOURCE
         marker.pose.position.x = position[0]
         marker.pose.position.y = position[1]
@@ -46,15 +90,17 @@ class GripperVisualiser:
         tf_mesh_to_gripper[0][3] = t1[0] # x
         tf_mesh_to_gripper[1][3] = t1[1] # y
         tf_mesh_to_gripper[2][3] = t1[2] # z
-        tf_gripper_to_mesh = np.linalg.inv(tf_mesh_to_gripper)
+        # tf_gripper_to_mesh = np.linalg.inv(tf_mesh_to_gripper) # no need for the inverse this time
 
         tf_part_to_mesh = tf.transformations.euler_matrix(part_rot[0], part_rot[1], part_rot[2])
         tf_part_to_mesh[0][3] = part_trans[0] # x
         tf_part_to_mesh[1][3] = part_trans[1] # y
         tf_part_to_mesh[2][3] = part_trans[2] # z
-        tf_mesh_to_part = np.linalg.inv(tf_part_to_mesh)
+        # tf_mesh_to_part = np.linalg.inv(tf_part_to_mesh) # no need for the inverse this time
 
-        new_m = np.dot(tf_mesh_to_gripper, tf_part_to_mesh)
+        # new_m = np.dot(tf_mesh_to_gripper, tf_part_to_mesh)
+        # transform once more to global reference frame
+        new_m = np.dot(self.tf_gripper_to_world, (np.dot(self.tf_pose_to_posearrayorigin, np.dot(tf_mesh_to_gripper, tf_part_to_mesh))))
         n_roll, n_pitch, n_yaw = tf.transformations.euler_from_matrix(new_m)
         q_orientation = tf.transformations.quaternion_from_euler(n_roll, n_pitch, n_yaw)
         position = [new_m[0][3], new_m[1][3], new_m[2][3] ]
@@ -145,5 +191,4 @@ class GripperVisualiser:
 if __name__=='__main__':
     rospy.init_node('gripper_visualiser_node', anonymous=False)
     gv = GripperVisualiser()
-    gv.publish_gripper([0, 0, 0])
     rospy.spin()
