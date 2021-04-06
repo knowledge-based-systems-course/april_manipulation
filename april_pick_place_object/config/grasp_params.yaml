@@ -1,0 +1,64 @@
+# Picking parameters
+
+# the list of names of the gripper joint
+gripper_joint_names:
+    - jMCP1
+    - jMCP2
+    - jMCP3
+    - jMCP4
+    - jMCP5
+    - jmetacarpus
+
+# the joint angle value of the gripper when its closed
+gripper_close:
+    - 0.40   # jMCP1 (thumb extension/flexion)
+    - 1.17   # jMCP2 (index)
+    - 1.21   # jMCP3 (middle)
+    - 1.19   # jMCP4 (ring)
+    - 1.03   # jMCP5 (little)
+    - 0.73   # jmetacarpus (thumb abduction/adduction)
+
+# the joint angle value of the gripper when its open
+gripper_open:
+    - 0.0    # jMCP1 (thumb extension/flexion)
+    - 0.0    # jMCP2 (index)
+    - 0.0    # jMCP3 (middle)
+    - 0.0    # jMCP4 (ring)
+    - 0.0    # jMCP5 (little)
+    - 0.73   # jmetacarpus (thumb abduction/adduction)
+
+# the list of max torque values to apply while closing the gripper around the object
+gripper_joint_efforts:
+    - 10.0
+    - 10.0
+    - 10.0
+    - 10.0
+    - 10.0
+    - 10.0
+
+# The estimated probability of success for this grasp, or some other measure of how 'good' it is.
+grasp_quality: 1.0
+
+# the maximum contact force to use while grasping (<=0 to disable)
+max_contact_force: 1.0
+
+# the detected object bounding box will be enlarged by adding this value to its 3 dimensions (in meters)
+object_padding: 0.0   # default: 0.04
+
+# The approach direction to take before picking an object
+# values are expressed w.r.t end_effector reference frame
+pre_grasp_approach:
+    min_dist: 0.08
+    desired: 0.25
+    axis: [0.0, 0.0, 1.0] # side grasp, approach in "z" axis to object
+
+# The retreat direction to take after a grasp has been completed (object is attached)
+post_grasp_retreat:
+    frame_id: 'world'
+    min_dist: 0.1
+    desired: 0.15
+    axis: [0.0, 0.0, 1.0] # lift object up in "z" direction
+
+# the gripper orientation when grasping from the side in quaternion
+side_grasp_orientation: [-0.190164, 0.714782, -0.133767, -0.659568]
+top_grasp_orientation:  [0.057315, -0.987628, 0.136502, -0.051700]

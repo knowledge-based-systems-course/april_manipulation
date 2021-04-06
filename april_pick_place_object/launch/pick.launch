@@ -4,6 +4,7 @@
   <!-- april analytical pick object script -->
   <node pkg="april_pick_place_object" type="pick.py" name="pick_object_node" output="screen" >
     <rosparam file="$(find april_pick_place_object)/config/pick_params.yaml" command="load" />
+    <rosparam file="$(find april_pick_place_object)/config/grasp_params.yaml" command="load" />
   </node>
 
 </launch>
