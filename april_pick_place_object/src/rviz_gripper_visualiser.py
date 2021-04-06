@@ -30,6 +30,8 @@ class GripperVisualiser:
         rospy.sleep(0.5)
         self.listener = tf.TransformListener()
         self.tf_gripper_to_world = None
+        self.mesh_count = 0
+        rospy.loginfo('gripper visualisation node started')
 
     def get_tf_pose_array_wrt_global(self, frame_id):
         try:
@@ -46,9 +48,10 @@ class GripperVisualiser:
         return False
 
     def poseArrayCB(self, msg):
+        self.mesh_count = 0
         for i in range(5): # try 5 times to query tf
             if self.get_tf_pose_array_wrt_global(msg.header.frame_id):
-                rospy.loginfo('tf listener was able to find transform')
+                marker_array_msg = MarkerArray()
                 for pose in msg.poses:
                     rot = []
                     rot.append(pose.orientation.x)
@@ -61,9 +64,8 @@ class GripperVisualiser:
                     tf_pose_to_posearrayorigin[1][3] = pose.position.y # y
                     tf_pose_to_posearrayorigin[2][3] = pose.position.z # z
                     self.tf_pose_to_posearrayorigin = tf_pose_to_posearrayorigin
-                    self.marker_array_msg = self.make_marker_array_msg()
-                    # marker.header.stamp = rospy.Time.now()
-                    self.marker_array_pub.publish(self.marker_array_msg)
+                    marker_array_msg = self.extend_marker_array_msg(marker_array_msg)
+                self.marker_array_pub.publish(marker_array_msg)
                 break
             else:
                 rospy.sleep(0.3)
@@ -106,8 +108,7 @@ class GripperVisualiser:
         position = [new_m[0][3], new_m[1][3], new_m[2][3] ]
         return position, q_orientation
 
-    def make_marker_array_msg(self):
-        marker_array_msg = MarkerArray()
+    def extend_marker_array_msg(self, marker_array_msg):
 
         # THUMB
         # rosrun tf tf_echo hand_ee_link MCP1
@@ -118,7 +119,8 @@ class GripperVisualiser:
         part_rot = [1.18797, 0.58341, 0.64822]
         position, q_orientation = self.transform_part_to_gripper_ref_frame(t1, r1, part_trans, part_rot)
         marker_msg = self.make_marker_msg('thumb.stl', position, q_orientation)
-        marker_msg.id = 1
+        marker_msg.id = self.mesh_count
+        self.mesh_count += 1
         marker_array_msg.markers.append(copy.deepcopy(marker_msg))
 
         # RING
@@ -130,7 +132,8 @@ class GripperVisualiser:
         part_rot = [0, -1.74533, 1.5708]
         position, q_orientation = self.transform_part_to_gripper_ref_frame(t1, r1, part_trans, part_rot)
         marker_msg = self.make_marker_msg('ring.stl', position, q_orientation)
-        marker_msg.id = 2
+        marker_msg.id = self.mesh_count
+        self.mesh_count += 1
         marker_array_msg.markers.append(copy.deepcopy(marker_msg))
 
         # LITTLE
@@ -142,7 +145,8 @@ class GripperVisualiser:
         part_rot = [-0.08866, -1.91864, 1.56133]
         position, q_orientation = self.transform_part_to_gripper_ref_frame(t1, r1, part_trans, part_rot)
         marker_msg = self.make_marker_msg('little.stl', position, q_orientation)
-        marker_msg.id = 3
+        marker_msg.id = self.mesh_count
+        self.mesh_count += 1
         marker_array_msg.markers.append(copy.deepcopy(marker_msg))
 
         # INDEX
@@ -155,7 +159,8 @@ class GripperVisualiser:
         part_rot = [0.45906, -1.37586, 1.10409]
         position, q_orientation = self.transform_part_to_gripper_ref_frame(t1, r1, part_trans, part_rot)
         marker_msg = self.make_marker_msg('index.stl', position, q_orientation)
-        marker_msg.id = 4
+        marker_msg.id = self.mesh_count
+        self.mesh_count += 1
         marker_array_msg.markers.append(copy.deepcopy(marker_msg))
 
         # MIDDLE
@@ -167,7 +172,8 @@ class GripperVisualiser:
         part_rot = [1.5708, -1.5708, 0]
         position, q_orientation = self.transform_part_to_gripper_ref_frame(t1, r1, part_trans, part_rot)
         marker_msg = self.make_marker_msg('middle.stl', position, q_orientation)
-        marker_msg.id = 5
+        marker_msg.id = self.mesh_count
+        self.mesh_count += 1
         marker_array_msg.markers.append(copy.deepcopy(marker_msg))
 
         # PALM
@@ -181,7 +187,8 @@ class GripperVisualiser:
         # apply transform
         position, q_orientation = self.transform_part_to_gripper_ref_frame(t1, r1, part_trans, part_rot)
         marker_msg = self.make_marker_msg('palm_simple.stl', position, q_orientation)
-        marker_msg.id = 6
+        marker_msg.id = self.mesh_count
+        self.mesh_count += 1
         # scale down, taken from urdf
         marker_msg.scale = geometry_msgs.msg.Vector3(0.12203, 0.12203, 0.12203)
         marker_array_msg.markers.append(copy.deepcopy(marker_msg))
