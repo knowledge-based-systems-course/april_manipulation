@@ -25,6 +25,8 @@ class PickTools():
         arm_goal_tolerance = rospy.get_param('~arm_goal_tolerance', 0.01)
         self.pick_attempts = rospy.get_param('~pick_attempts', 10)
         planning_time = rospy.get_param('~planning_time', 10.0)
+        self.pregrasp_posture_required = rospy.get_param('~pregrasp_posture_required', True)
+        self.pregrasp_posture = rospy.get_param('~pregrasp_posture', 'home')
 
         # to be able to transform PoseStamped later in the code
         self.transformer = tf.listener.TransformerROS()
@@ -168,7 +170,8 @@ class PickTools():
             return
 
         # move arm to pregrasp in joint space, not really needed, can be removed
-        self.move_arm_to_posture('home')
+        if self.pregrasp_posture_required:
+            self.move_arm_to_posture(self.pregrasp_posture)
 
         # ::::::::: setup planning scene
         rospy.loginfo('setup planning scene')
