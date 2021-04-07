@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>rqt_grasp</name>
+  <version>0.0.1</version>
+  <description>
+    rqt designed to help tuning pregrasp planner parameters.
+    It's purpose is to facilitate the debugging of the robot grasping without
+    so many terminals to manage.
+  </description>
+
+  <license>BSD</license>
+
+  <author email="oscar.lima@dfki.de">Oscar Lima</author>
+  <maintainer email="oscar.lima@dfki.de">Oscar Lima</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_export_depend>rqt_gui</build_export_depend>
+  <build_export_depend>rqt_gui_py</build_export_depend>
+
+  <exec_depend>rqt_gui</exec_depend>
+  <exec_depend>rqt_gui_py</exec_depend>
+  <!--<exec_depend>high_level_robot_api</exec_depend>-->
+
+  <export>
+    <rqt_gui plugin="${prefix}/plugin.xml"/> 
+  </export>
+
+</package>

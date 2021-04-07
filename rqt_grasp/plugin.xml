@@ -1,0 +1,19 @@
+<library path="src">
+  <class name="RqtGrasp" type="rqt_grasp.rqt_grasp.RqtGrasp" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      rqt designed to help tuning pregrasp planner parameters.
+      It's purpose is to facilitate the debugging of the mbot grasping without
+      so many terminals to manage.
+    </description>
+    <qtgui>
+      <group>
+        <label>Robot</label>
+        <icon type="theme">folder</icon>
+        <statustip>Plugins specific to robot grasping.</statustip>
+      </group>
+      <label>rqt_grasp!</label>
+      <icon type="theme">applications-other</icon>
+      <statustip>use for manipulation and simple pregrasp planner</statustip>
+    </qtgui>
+  </class>
+</library>
