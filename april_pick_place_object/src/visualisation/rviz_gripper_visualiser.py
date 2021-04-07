@@ -18,14 +18,15 @@ class GripperVisualiser:
     '''
     def __init__(self):
         # parameters
-        self.alpha = rospy.get_param('~transparency', 0.5) # the transparency of the mesh, if 1.0 no transparency is set
         self.global_reference_frame = rospy.get_param('~global_reference_frame', 'world')
         self.marker_ns = rospy.get_param('~marker_namespace', 'grasp_poses')
+        self.rgb_mesh_color = rospy.get_param('~rgb_mesh_color', [153.0, 102.0, 51.0]) # use 0.0 - 255.0 range
+        self.alpha = rospy.get_param('~transparency', 0.5) # the transparency of the mesh, if 1.0 no transparency is set
 
         # publish marker array to rviz for visualising the gripper
         self.marker_array_pub = rospy.Publisher('gripper', MarkerArray, queue_size=1)
         # subscribe to pose array to place the gripper in multiple locations
-        rospy.Subscriber('/pose_generator_node/poses', PoseArray, self.poseArrayCB)
+        rospy.Subscriber('pose_array', PoseArray, self.poseArrayCB)
         rospy.sleep(0.5)
         self.listener = tf.TransformListener()
         self.tf_gripper_to_world = None
@@ -94,7 +95,8 @@ class GripperVisualiser:
         marker.pose.orientation.z = orientation[2]
         marker.pose.orientation.w = orientation[3]
         marker.scale = geometry_msgs.msg.Vector3(mesh_scale[0], mesh_scale[1], mesh_scale[2])
-        marker.color = std_msgs.msg.ColorRGBA(0.0, 1.0, 0.0, self.alpha) # green
+        marker.color = std_msgs.msg.ColorRGBA(\
+            self.rgb_mesh_color[0]/255., self.rgb_mesh_color[1]/255., self.rgb_mesh_color[2]/255., self.alpha)
         marker.mesh_resource = mesh_path
         return marker
 
