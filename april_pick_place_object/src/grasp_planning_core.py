@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
+import copy
 import rospy
 
+from geometry_msgs.msg import PoseArray, PoseStamped
 from moveit_msgs.msg import Grasp, GripperTranslation
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
@@ -13,36 +15,32 @@ class GraspPlanningCore:
     def __init__(self):
 
         # parameters
-        self.gripper_joint_names = rospy.get_param('~gripper_joint_names', None)
-        gripper_close = rospy.get_param('~gripper_close', None)
-        gripper_open = rospy.get_param('~gripper_open', None)
-        self.gripper_joint_efforts = rospy.get_param('~gripper_joint_efforts', None)
-        self.grasp_quality = rospy.get_param('~grasp_quality', None)
-        self.object_padding = rospy.get_param('~object_padding', None)
-        self.max_contact_force = rospy.get_param('~max_contact_force', None)
+        self.gripper_joint_names = rospy.get_param('~gripper_joint_names')
+        gripper_close = rospy.get_param('~gripper_close')
+        gripper_open = rospy.get_param('~gripper_open')
+        self.gripper_joint_efforts = rospy.get_param('~gripper_joint_efforts')
+        self.grasp_quality = rospy.get_param('~grasp_quality', 1.0)
+        self.object_padding = rospy.get_param('~object_padding', 0.04)
+        self.max_contact_force = rospy.get_param('~max_contact_force', 1.0)
         # pregrasp parameters
-        self.pre_grasp_approach_min_dist = rospy.get_param('~pre_grasp_approach/min_dist', None)
-        self.pre_grasp_approach_desired = rospy.get_param('~pre_grasp_approach/desired', None)
-        self.pre_grasp_approach_axis = rospy.get_param('~pre_grasp_approach/axis', None)
+        self.pre_grasp_approach_min_dist = rospy.get_param('~pre_grasp_approach/min_dist')
+        self.pre_grasp_approach_desired = rospy.get_param('~pre_grasp_approach/desired')
+        self.pre_grasp_approach_axis = rospy.get_param('~pre_grasp_approach/axis')
         # post grasp retreat parameters
-        self.post_grasp_retreat_frame_id = rospy.get_param('~post_grasp_retreat/frame_id', None)
-        self.post_grasp_retreat_min_dist = rospy.get_param('~post_grasp_retreat/min_dist', None)
-        self.post_grasp_retreat_desired = rospy.get_param('~post_grasp_retreat/desired', None)
-        self.post_grasp_retreat_axis = rospy.get_param('~post_grasp_retreat/axis', None)
+        self.post_grasp_retreat_frame_id = rospy.get_param('~post_grasp_retreat/frame_id')
+        self.post_grasp_retreat_min_dist = rospy.get_param('~post_grasp_retreat/min_dist')
+        self.post_grasp_retreat_desired = rospy.get_param('~post_grasp_retreat/desired')
+        self.post_grasp_retreat_axis = rospy.get_param('~post_grasp_retreat/axis')
         # grasp type
         self.grasp_orientations = {}
-        self.grasp_orientations['side_grasp'] = rospy.get_param('~side_grasp_orientation', None)
-        self.grasp_orientations['top_grasp'] = rospy.get_param('~top_grasp_orientation', None)
-
-        # parameter sanity check
-        if not gripper_close or not gripper_open:
-            raise ValueError('mandatory parameters gripper_close or/and gripper_open not set')
-
-        if not self.gripper_joint_names or not self.gripper_joint_efforts:
-            raise ValueError('mandatory parameter gripper_joint_names or/and gripper_joint_efforts not set')
+        self.grasp_orientations['side_grasp'] = rospy.get_param('~side_grasp_orientation')
+        self.grasp_orientations['top_grasp'] = rospy.get_param('~top_grasp_orientation')
 
         self.gripper_open_trajectory = self.make_gripper_trajectory(gripper_open)
         self.gripper_close_trajectory = self.make_gripper_trajectory(gripper_close)
+
+        # publish grasp poses as pose array
+        self.pose_array_pub = rospy.Publisher('~grasp_poses', PoseArray, queue_size=50)
 
     def make_gripper_trajectory(self, joint_angles):
         '''
@@ -87,7 +85,7 @@ class GraspPlanningCore:
         # the 'parent_link' of the end-effector, not actually the pose of any
         # link *in* the end-effector.  Typically this would be the pose of the
         # most distal wrist link before the hand (end-effector) links began.
-        g.grasp_pose = grasp_pose
+        # g.grasp_pose = grasp_pose # will be filled later
 
         # The internal posture of the hand for the grasp
         # positions and efforts are used
@@ -105,11 +103,33 @@ class GraspPlanningCore:
         g.allowed_touch_objects = [object_name]
 
         # A name for this grasp
-        g.id = 'top_grasp'
+        # g.id = 'top_grasp' # will be filled later
 
         # NOTE : one could change the orientation and generate more grasps, currently the list has only 1 grasp
 
-        return [g]
+        # call grasp planner
+        pose_array_msg = self.generate_poses(grasp_pose)
+        # publish poses for visualisation purposes
+        self.pose_array_pub.publish(pose_array_msg)
+
+        pose_stamped = PoseStamped()
+        pose_stamped.header.frame_id = pose_array_msg.header.frame_id
+        pose_stamped.header.stamp = pose_array_msg.header.stamp
+        grasps = []
+        for i, pose in enumerate(pose_array_msg.poses):
+            # convert to pose stamped
+            pose_stamped.pose = pose
+            g.grasp_pose = pose_stamped
+            g.id = 'grasp_' + str(i)
+            grasps.append(copy.deepcopy(g))
+
+        return grasps
+
+    def generate_poses(self, object_pose):
+        '''
+        virtual method, derive from this class and implement
+        '''
+        raise NotImplementedError()
 
     def make_gripper_translation_msg(self, frame_id, min_dist=0.08, desired=0.25, axis=[1.0, 0.0, 0.0]):
         '''

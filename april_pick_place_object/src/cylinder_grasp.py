@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from grasp_planning_core import GraspPlanningCore
+from simple_pregrasp_planner import SimpleGraspPlanner
 
-class CylinderGrasp(GraspPlanningCore):
+class CylinderGrasp(SimpleGraspPlanner):
     '''
-    Example on how to implement concrete methods out of GraspPlanningCore class
+    Example on how to implement concrete methods out of SimplePreGraspPlanner class
     '''
     def __init__(self):
         super().__init__()
