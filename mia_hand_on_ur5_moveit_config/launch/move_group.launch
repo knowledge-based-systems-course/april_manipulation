@@ -25,6 +25,10 @@
   <arg name="capabilities" default=""/>
   <arg name="disable_capabilities" default=""/>
 
+  <!-- arm default speed -->
+  <arg name="default_velocity_scaling_factor" default="0.1"/> <!-- slow arm, safety first! -->
+  <arg name="default_acceleration_scaling_factor" default="0.1"/> <!-- slow arm, safety first! -->
+
   <!-- load these non-default MoveGroup capabilities (space seperated) -->
   <!--
   <arg name="capabilities" value="
@@ -45,6 +49,8 @@
   <!-- load URDF, SRDF and joint_limits configuration -->
   <include file="$(find mia_hand_on_ur5_moveit_config)/launch/planning_context.launch">
     <arg name="load_robot_description" value="$(arg load_robot_description)" />
+    <arg name="default_velocity_scaling_factor" value="$(arg default_velocity_scaling_factor)"/> <!-- slow arm, safety first! -->
+    <arg name="default_acceleration_scaling_factor" value="$(arg default_acceleration_scaling_factor)"/> <!-- slow arm, safety first! -->
   </include>
 
   <!-- Planning Functionality -->

@@ -16,8 +16,14 @@
 
   <!-- moveit move group -->
   <arg name="use_pointcloud" default="true"/>
+  <!-- arm default speed -->
+  <arg name="default_velocity_scaling_factor" default="1.0"/> <!-- fast arm, use it like this only for simulation -->
+  <arg name="default_acceleration_scaling_factor" default="1.0"/> <!-- fast arm, use it like this only for simulation -->
   <include file="$(find mia_hand_on_ur5_moveit_config)/launch/move_group.launch" >
     <arg name="use_pointcloud" value="$(arg use_pointcloud)"/>
+    <!-- arm speed -->
+    <arg name="default_velocity_scaling_factor" value="$(arg default_velocity_scaling_factor)"/>
+    <arg name="default_acceleration_scaling_factor" value="$(arg default_acceleration_scaling_factor)"/>
   </include>
 
   <!-- visualise gripper in rviz as marker -->

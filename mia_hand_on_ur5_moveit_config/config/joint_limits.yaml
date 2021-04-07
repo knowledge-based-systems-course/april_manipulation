@@ -3,8 +3,9 @@
 # Specific joint properties can be changed with the keys [max_position, min_position, max_velocity, max_acceleration]
 # Joint limits can be turned off with [has_velocity_limits, has_acceleration_limits]
 joint_limits:
-  default_velocity_scaling_factor: 0.1 # downscale velocity and acceleration limits, if 1.0 then move at maximum speed
-  default_acceleration_scaling_factor: 0.1
+  # set the following 2 parameters during runtime to be able to run 2 configurations: slow and fast
+  # default_velocity_scaling_factor: 1.0 # downscale velocity and acceleration limits, if 1.0 then move at maximum speed
+  # default_acceleration_scaling_factor: 1.0
   # ARM
   ur5_shoulder_pan_joint:
     max_position: 0.7853981633974483 # if commented, then take value from URDF file

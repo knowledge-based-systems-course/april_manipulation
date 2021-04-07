@@ -5,6 +5,10 @@
   <!-- The name of the parameter under which the URDF is loaded -->
   <arg name="robot_description" default="robot_description"/>
 
+  <!-- arm default speed -->
+  <arg name="default_velocity_scaling_factor" default="0.1"/> <!-- slow arm, safety first! -->
+  <arg name="default_acceleration_scaling_factor" default="0.1"/> <!-- slow arm, safety first! -->
+
   <!-- Load universal robot description format (URDF) -->
   <param if="$(arg load_robot_description)" name="$(arg robot_description)" command="xacro  '$(find april_robot_description)/urdf/mia_hand_on_ur5.urdf.xacro'"/>
 
@@ -14,6 +18,8 @@
   <!-- Load updated joint limits (override information from URDF) -->
   <group ns="$(arg robot_description)_planning">
     <rosparam command="load" file="$(find mia_hand_on_ur5_moveit_config)/config/joint_limits.yaml"/>
+    <param name="joint_limits/default_velocity_scaling_factor" value="$(arg default_velocity_scaling_factor)"/>
+    <param name="joint_limits/default_acceleration_scaling_factor" value="$(arg default_acceleration_scaling_factor)"/>
   </group>
 
   <!-- Load default settings for kinematics; these settings are overridden by settings in a node's namespace -->
