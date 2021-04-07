@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- pose generator, receive a pose and generate multiple ones with different orientations -->
+  <node pkg="april_pick_place_object" type="pose_generator.py" name="pose_generator_node" output="screen" >
+    <rosparam file="$(find april_pick_place_object)/config/pose_generator_params.yaml" command="load" />
+  </node>
+
+</launch>

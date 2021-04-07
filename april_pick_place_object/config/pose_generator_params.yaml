@@ -1,0 +1,19 @@
+# Pose generator params
+
+# original params
+step: 0.2
+roll_start: -0.3
+roll_end: 0.3
+pitch_start: -0.3
+pitch_end: 0.3
+yaw_start: -0.3
+yaw_end: 0.3
+
+## experimental params
+#step: 0.5
+#roll_start: 0.0
+#roll_end: 0.0
+#pitch_start: 0.0
+#pitch_end: 0.0
+#yaw_start: 0.0
+#yaw_end: 1.0
