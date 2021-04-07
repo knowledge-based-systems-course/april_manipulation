@@ -22,6 +22,7 @@ class GripperVisualiser:
         # the transparency of the mesh, if 1.0 no transparency is set
         self.alpha = 0.5
         self.global_reference_frame = 'world'
+        self.marker_ns = 'grasp_poses'
 
         # publish marker array to rviz for visualising the gripper
         self.marker_array_pub = rospy.Publisher('gripper', MarkerArray, queue_size=1)
@@ -47,7 +48,18 @@ class GripperVisualiser:
             rospy.logwarn(f'failed to find transform from {self.global_reference_frame} to {frame_id} , will retry')
         return False
 
+    def detele_previous_markers(self):
+        marker_array_msg = MarkerArray()
+        marker = Marker()
+        marker.id = 0
+        marker.ns = self.marker_ns
+        marker.action = Marker.DELETEALL
+        marker_array_msg.markers.append(marker)
+        self.marker_array_pub.publish(marker_array_msg)
+        rospy.sleep(0.2)
+
     def poseArrayCB(self, msg):
+        self.detele_previous_markers()
         self.mesh_count = 0
         for i in range(5): # try 5 times to query tf
             if self.get_tf_pose_array_wrt_global(msg.header.frame_id):
@@ -72,6 +84,8 @@ class GripperVisualiser:
 
     def make_marker_msg(self, mesh, position, orientation):
         marker = Marker()
+        # marker.lifetime = rospy.Duration(3.0)
+        marker.ns = self.marker_ns
         marker.header.frame_id = self.global_reference_frame
         marker.type = Marker.MESH_RESOURCE
         marker.pose.position.x = position[0]
