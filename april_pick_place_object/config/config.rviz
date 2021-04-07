@@ -243,35 +243,6 @@ Visualization Manager:
             ur5_base_link:
               ur5_base:
                 {}
-              ur5_shoulder_link:
-                ur5_upper_arm_link:
-                  ur5_forearm_link:
-                    ur5_wrist_1_link:
-                      ur5_wrist_2_link:
-                        ur5_wrist_3_link:
-                          ur5_ee_link:
-                            {}
-                          ur5_tool0:
-                            {}
-                          wrist:
-                            MCP2:
-                              index_finger_sensor:
-                                {}
-                            MCP3:
-                              middle_finger_sensor:
-                                {}
-                            MCP4:
-                              {}
-                            MCP5:
-                              {}
-                            hand_ee_link:
-                              {}
-                            metacarpus:
-                              thumb_sensor:
-                                MCP1:
-                                  {}
-          cylinder:
-            {}
       Update Interval: 0
       Value: true
     - Class: rviz/Group
@@ -439,32 +410,40 @@ Visualization Manager:
             Show Robot Collision: false
             Show Robot Visual: true
           Value: true
+        - Alpha: 1
+          Arrow Length: 0.30000001192092896
+          Axes Length: 0.30000001192092896
+          Axes Radius: 0.009999999776482582
+          Class: rviz/PoseArray
+          Color: 255; 25; 0
+          Enabled: true
+          Head Length: 0.07000000029802322
+          Head Radius: 0.029999999329447746
+          Name: pose_generator
+          Queue Size: 1
+          Shaft Length: 0.23000000417232513
+          Shaft Radius: 0.009999999776482582
+          Shape: Axes
+          Topic: /pick_object_node/grasp_poses
+          Unreliable: false
+          Value: true
+        - Class: rviz/MarkerArray
+          Enabled: true
+          Marker Topic: /gripper
+          Name: gripper_visualisation
+          Namespaces:
+            {}
+          Queue Size: 100
+          Value: true
       Enabled: true
       Name: manipulation
     - Alpha: 1
       Class: rviz/Axes
-      Enabled: false
-      Length: 0.30000001192092896
-      Name: fixed frame
-      Radius: 0.019999999552965164
-      Reference Frame: <Fixed Frame>
-      Value: false
-    - Alpha: 1
-      Arrow Length: 0.30000001192092896
-      Axes Length: 0.30000001192092896
-      Axes Radius: 0.009999999776482582
-      Class: rviz/PoseArray
-      Color: 255; 25; 0
       Enabled: true
-      Head Length: 0.07000000029802322
-      Head Radius: 0.029999999329447746
-      Name: PoseArray
-      Queue Size: 1
-      Shaft Length: 0.23000000417232513
-      Shaft Radius: 0.009999999776482582
-      Shape: Axes
-      Topic: /pose_generator_node/poses
-      Unreliable: false
+      Length: 0.20000000298023224
+      Name: fixed frame
+      Radius: 0.004999999888241291
+      Reference Frame: <Fixed Frame>
       Value: true
   Enabled: true
   Global Options:
@@ -494,7 +473,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.9667818546295166
+      Distance: 4.018402099609375
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -502,17 +481,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.0003820718266069889
-        Y: 0.3034772276878357
-        Z: 0.5183521509170532
+        X: -0.06550747156143188
+        Y: 0.5440720319747925
+        Z: 0.8879758715629578
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6197968125343323
+      Pitch: 0.7297970056533813
       Target Frame: <Fixed Frame>
-      Yaw: 0.9254026412963867
+      Yaw: 0.9254246950149536
     Saved: ~
 Window Geometry:
   Displays:
