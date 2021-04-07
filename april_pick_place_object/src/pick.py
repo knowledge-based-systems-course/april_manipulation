@@ -24,6 +24,7 @@ class PickTools():
         hand_group_name = rospy.get_param('~hand_group_name', 'hand')
         arm_goal_tolerance = rospy.get_param('~arm_goal_tolerance', 0.01)
         self.pick_attempts = rospy.get_param('~pick_attempts', 10)
+        planning_time = rospy.get_param('~planning_time', 10.0)
 
         # to be able to transform PoseStamped later in the code
         self.transformer = tf.listener.TransformerROS()
@@ -43,6 +44,7 @@ class PickTools():
 
         self.robot = moveit_commander.RobotCommander()
         self.arm = moveit_commander.MoveGroupCommander(arm_group_name, wait_for_servers=10.0)
+        self.robot.arm.set_planning_time(planning_time)
         self.hand = moveit_commander.MoveGroupCommander(hand_group_name, wait_for_servers=10.0)
         self.arm.set_goal_tolerance(arm_goal_tolerance)
         self.scene = PlanningSceneInterface()
