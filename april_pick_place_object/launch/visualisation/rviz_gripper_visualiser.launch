@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- visualise a gripper in rviz -->
+  <node pkg="april_pick_place_object" type="rviz_gripper_visualiser.py" name="rviz_gripper_visualiser" output="screen" >
+    <rosparam file="$(find april_pick_place_object)/config/visualisation/gripper_open_transformations.yaml" command="load" ns="gripper_transformations"/>
+  </node>
+
+</launch>
