@@ -21,6 +21,7 @@ class PickTools():
 
         # parameters
         arm_group_name = rospy.get_param('~arm_group_name', 'arm')
+        hand_group_name = rospy.get_param('~hand_group_name', 'hand')
         arm_goal_tolerance = rospy.get_param('~arm_goal_tolerance', 0.01)
         self.pick_attempts = rospy.get_param('~pick_attempts', 10)
 
@@ -42,6 +43,7 @@ class PickTools():
 
         self.robot = moveit_commander.RobotCommander()
         self.arm = moveit_commander.MoveGroupCommander(arm_group_name, wait_for_servers=10.0)
+        self.hand = moveit_commander.MoveGroupCommander(hand_group_name, wait_for_servers=10.0)
         self.arm.set_goal_tolerance(arm_goal_tolerance)
         self.scene = PlanningSceneInterface()
 
@@ -125,43 +127,13 @@ class PickTools():
         self.arm.set_named_target(arm_posture_name)
         self.arm.go()
 
-    def test_going_to_cartesian_pose(self):
+    def move_hand_to_posture(self, hand_posture_name):
         '''
-        this is a test function, does not belong to pick, remove
-        goto cartesian pose with moveit
+        use moveit commander to send the hand to a predefined arm configuration
+        defined in srdf
         '''
-
-        # home pose expressed in cartesian coordinates, obtained via:
-        # rosrun tf tf_echo world hand_ee_link
-        target_pose = PoseStamped()
-
-        # object in cartesian coordinates (is also recorded as "object" posture in srdf)
-        translation = [-0.000950, 0.682979, 1.158076]
-        rotation = [-0.116526, 0.609924, -0.207705, -0.755825]
-
-        # home posture in cartesian coordinates
-        #translation = [-0.288703, 0.154675, 1.592202]
-        #rotation = [0.612385, -0.684744, -0.190438, -0.346182]
-
-        # current pose, when doing bringup arm is already there
-        #translation = [-0.596009, -0.291193, 1.481584]
-        #rotation = [-0.703003, 0.082303, 0.701726, 0.081197]
-
-        rospy.loginfo(f'planning frame : {self.arm.get_planning_frame()}')
-        target_pose.header.frame_id =     self.arm.get_planning_frame() # 'world'
-        target_pose.pose.position.x =     translation[0]
-        target_pose.pose.position.y =     translation[1]
-        target_pose.pose.position.z =     translation[2]
-        target_pose.pose.orientation.x =  rotation[0]
-        target_pose.pose.orientation.y =  rotation[1]
-        target_pose.pose.orientation.z =  rotation[2]
-        target_pose.pose.orientation.w =  rotation[3]
-        rospy.loginfo('going to cartesian pose')
-        self.grasp_pose_pub.publish(target_pose)
-        self.arm.set_pose_target(target_pose, end_effector_link='hand_ee_link')
-        self.arm.go()
-        rospy.loginfo('finished going to cartesian pose...')
-        rospy.spin()
+        self.hand.set_named_target(hand_posture_name)
+        self.hand.go()
 
     def pick_object(self, object_name):
         '''
@@ -172,6 +144,13 @@ class PickTools():
         5) call pick moveit functionality
         '''
         rospy.loginfo(f'picking object : {object_name}')
+
+        # open gripper
+        rospy.loginfo('gripper will open now')
+        self.move_hand_to_posture('open')
+
+        # detach (all) object if any from the gripper
+        self.hand.detach_object()
 
         # flag to keep track of the state of the grasp
         success = False
@@ -224,10 +203,6 @@ class PickTools():
         grasp_pose = PoseStamped()
         grasp_pose.header.frame_id = self.robot.get_planning_frame()
 
-        # object in cartesian coordinates, use for testing purposes
-        # translation = [-0.000950, 0.682979, 1.158076]
-        # rotation = [-0.116526, 0.609924, -0.207705, -0.755825]
-
         # take position from perceived object
         translation = [object_pose.pose.position.x, object_pose.pose.position.y, object_pose.pose.position.z]
         # get gripper rotation from parameters based on the desired semantic grasp type
@@ -246,8 +221,8 @@ class PickTools():
         # publish grasp pose for visualisation purposes
         self.grasp_pose_pub.publish(grasp_pose)
 
-        ## remove octomap, table and object are added manually to planning scene
-        #self.clear_octomap()
+        # remove octomap, table and object are added manually to planning scene
+        # self.clear_octomap()
 
         # try to pick object, repeat x times if failure
         for attempt in range(self.pick_attempts):
@@ -274,4 +249,3 @@ if __name__=='__main__':
     rospy.init_node('pick_object_node', anonymous=False)
     pick = PickTools()
     pick.start_pick_node()
-    #pick.test_going_to_cartesian_pose()

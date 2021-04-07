@@ -14,7 +14,9 @@ class PoseGenerator():
     def __init__(self):
 
         # parameters
-        self.step = rospy.get_param('~step', 0.2)
+        self.roll_step = rospy.get_param('~roll_step', 0.2)
+        self.pitch_step = rospy.get_param('~pitch_step', 0.2)
+        self.yaw_step = rospy.get_param('~yaw_step', 0.2)
         self.roll_start = rospy.get_param('~roll_start', -0.3) # ~15 degree
         self.roll_end = rospy.get_param('~roll_end', 0.3) # ~15 degree
         self.pitch_start = rospy.get_param('~pitch_start', -0.3) # ~15 degree
@@ -68,9 +70,9 @@ class PoseGenerator():
         pose_array_msg.header.stamp = rospy.Time.now()
         tf_pose = Pose()
         # sample multiple rotations
-        for roll in self.generate_angles(start=self.roll_start, end=self.roll_end, step=self.step):
-            for pitch in self.generate_angles(start=self.pitch_start, end=self.pitch_end, step=self.step):
-                for yaw in self.generate_angles(start=self.yaw_start, end=self.yaw_end, step=self.step):
+        for roll in self.generate_angles(start=self.roll_start, end=self.roll_end, step=self.roll_step):
+            for pitch in self.generate_angles(start=self.pitch_start, end=self.pitch_end, step=self.pitch_step):
+                for yaw in self.generate_angles(start=self.yaw_start, end=self.yaw_end, step=self.yaw_step):
                     nm = tf.transformations.euler_matrix(roll, pitch, yaw) # rpy
 
                     # transform back to world reference frame

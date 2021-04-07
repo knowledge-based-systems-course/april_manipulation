@@ -3,6 +3,9 @@
 # the name of the arm kinematic chain group given when moveit was configured
 arm_group_name: arm
 
+# the name of the moveit gripper group
+hand_group_name: hand
+
 # how accurate you want a cartesian pose to be achieved
 # if set too low IK is likely to fail, if set too high arm will not reach accurately
 arm_goal_tolerance: 0.01   # default: 0.01
