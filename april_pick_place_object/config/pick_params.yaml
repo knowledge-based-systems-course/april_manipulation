@@ -20,4 +20,23 @@ planning_time: 10.0        # default: 5.0
 pregrasp_posture_required: False # default: True
 
 # the predefined arm posture to go before picking an object
+# this posture will be applied only if pregrasp_posture_required is set to True, otherwise is ignored
 pregrasp_posture: 'home'
+
+# a list of boxes to add to the planning scene
+planning_scene_boxes:
+  - scene_name: 'table'
+    frame_id: 'world'
+    box_x_dimension: 1.39
+    box_y_dimension: 0.85
+    box_z_dimension: 1.0
+    box_position_x: 0.06
+    box_position_y: 0.69
+    box_position_z: 0.5
+    box_orientation_x: 0.0
+    box_orientation_y: 0.0
+    box_orientation_z: 0.0
+    box_orientation_w: 1.0
+
+# if True all objects from the planning scene are removed before every pick takes place
+clear_planning_scene: True   # default: False

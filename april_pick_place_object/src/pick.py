@@ -27,6 +27,8 @@ class PickTools():
         planning_time = rospy.get_param('~planning_time', 10.0)
         self.pregrasp_posture_required = rospy.get_param('~pregrasp_posture_required', True)
         self.pregrasp_posture = rospy.get_param('~pregrasp_posture', 'home')
+        self.planning_scene_boxes = rospy.get_param('~planning_scene_boxes', [])
+        self.clear_planning_scene = rospy.get_param('~clear_planning_scene', False)
 
         # to be able to transform PoseStamped later in the code
         self.transformer = tf.listener.TransformerROS()
@@ -176,23 +178,27 @@ class PickTools():
         # ::::::::: setup planning scene
         rospy.loginfo('setup planning scene')
 
-        # remove all objects from the planning scene
-        self.clean_scene()
+        # remove all objects from the planning scene if needed
+        if self.clear_planning_scene:
+            rospy.logwarn('Clearing planning scene')
+            self.clean_scene()
 
-        # add a table to the planning scene
-        table_pose = PoseStamped()
-        table_pose.header.frame_id = 'world'
-        box_x = 1.39
-        box_y = 0.85
-        box_z = 1.0
-        table_pose.pose.position.x = 0.06
-        table_pose.pose.position.y = 0.69
-        table_pose.pose.position.z = box_z / 2.0
-        table_pose.pose.orientation.x = 0.0
-        table_pose.pose.orientation.y = 0.0
-        table_pose.pose.orientation.z = 0.0
-        table_pose.pose.orientation.w = 1.0
-        self.scene.add_box('table', table_pose, (box_x, box_y, box_z))
+        # add a list of custom boxes defined by the user to the planning scene
+        for planning_scene_box in self.planning_scene_boxes:
+            # add a box to the planning scene
+            table_pose = PoseStamped()
+            table_pose.header.frame_id = planning_scene_box['frame_id']
+            box_x = planning_scene_box['box_x_dimension']
+            box_y = planning_scene_box['box_y_dimension']
+            box_z = planning_scene_box['box_z_dimension']
+            table_pose.pose.position.x = planning_scene_box['box_position_x']
+            table_pose.pose.position.y = planning_scene_box['box_position_y']
+            table_pose.pose.position.z = planning_scene_box['box_position_z']
+            table_pose.pose.orientation.x = planning_scene_box['box_orientation_x']
+            table_pose.pose.orientation.y = planning_scene_box['box_orientation_y']
+            table_pose.pose.orientation.z = planning_scene_box['box_orientation_z']
+            table_pose.pose.orientation.w = planning_scene_box['box_orientation_w']
+            self.scene.add_box(planning_scene_box['scene_name'], table_pose, (box_x, box_y, box_z))
 
         # add an object to be grasped, data is comes from perception
         object_pose, bounding_box = self.make_object_pose(object_name, self.detections_msg)
