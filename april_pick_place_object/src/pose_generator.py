@@ -26,12 +26,38 @@ class PoseGenerator():
 
         self.pose_array_pub = rospy.Publisher('~poses', PoseArray, queue_size=50)
 
-        # give some time for pose generator to register in the ros network
+        # give some time for pose generator publisher to register in the ros network
         rospy.sleep(0.5)
 
+    def modify_list_start_from_center(self, some_list):
+        '''
+        modify the list order such that starts from the middle element and then goes one left one right recursively
+        example:
+        some_list = [5, 3, 1, 2, 4]
+        new_list = [1, 2, 3, 4, 5]
+        '''
+        new_list = []
+        middle_index = int(len(some_list) / 2)
+        new_list.append(some_list[middle_index])
+        for i in range(1, 1 + middle_index):
+            if middle_index + i < len(some_list):
+                new_list.append(some_list[middle_index + i])
+            if middle_index - i < len(some_list):
+                new_list.append(some_list[middle_index - i])
+        return new_list
+
     def generate_angles(self, start=0.0, end=2.0, step=0.1):
+        '''
+        create a list of samples
+        example:
+        start = 0.0, end = 5.0, step = 1.0
+        result = [0.0, 1.0, 2.0 , 3.0, 4.0 , 5.0]
+        NOTE: we have added a modifier at the end of this function to alternate the order of the list
+        starting from the middle element, so for this example the list will return
+        result = [3.0, 4.0, 2.0, 5.0, 1.0, 0.0]
+        '''
         my_list = []
-        if abs(start - end) <= 0.000001: # if start == end
+        if abs(start - end) < 0.000001: # if start == end
             return [start]
         assert(start < end)
         temp_number = start
@@ -42,7 +68,7 @@ class PoseGenerator():
         # remove last element (is slightly greater than the end value)
         my_list.pop()
         my_list.append(end)
-        return my_list
+        return self.modify_list_start_from_center(my_list)
 
     def spherical_sampling(self, original_pose, offset_vector):
         # offset to object tf
@@ -63,7 +89,6 @@ class PoseGenerator():
         tf_object_to_world[1][3] = original_pose.pose.position.y # y
         tf_object_to_world[2][3] = original_pose.pose.position.z # z
 
-        # apply rotations to identity matrix
         # prepare pose array msg
         pose_array_msg = PoseArray()
         pose_array_msg.header.frame_id = original_pose.header.frame_id
@@ -73,6 +98,7 @@ class PoseGenerator():
         for roll in self.generate_angles(start=self.roll_start, end=self.roll_end, step=self.roll_step):
             for pitch in self.generate_angles(start=self.pitch_start, end=self.pitch_end, step=self.pitch_step):
                 for yaw in self.generate_angles(start=self.yaw_start, end=self.yaw_end, step=self.yaw_step):
+                    # apply rotations to identity matrix
                     nm = tf.transformations.euler_matrix(roll, pitch, yaw) # rpy
 
                     # transform back to world reference frame
