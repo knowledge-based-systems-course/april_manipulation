@@ -27,12 +27,12 @@ pregrasp_posture: 'home'
 planning_scene_boxes:
   - scene_name: 'table'
     frame_id: 'world'
-    box_x_dimension: 1.39
-    box_y_dimension: 0.85
-    box_z_dimension: 1.0
-    box_position_x: 0.06
-    box_position_y: 0.69
-    box_position_z: 0.5
+    box_x_dimension: 1.5
+    box_y_dimension: 0.8
+    box_z_dimension: 1.015
+    box_position_x: 0.0
+    box_position_y: 0.7
+    box_position_z: 0.5075
     box_orientation_x: 0.0
     box_orientation_y: 0.0
     box_orientation_z: 0.0
