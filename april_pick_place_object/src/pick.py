@@ -100,7 +100,8 @@ class PickTools():
                     return
                 object_pose.pose.position.x =     detection.pose.pose.position.x
                 object_pose.pose.position.y =     detection.pose.pose.position.y
-                object_pose.pose.position.z =     detection.pose.pose.position.z
+                # set the collision model 5mm to avoid repeated collisions with the surface
+                object_pose.pose.position.z =     detection.pose.pose.position.z + 0.005 + padding / 2.0
                 object_pose.pose.orientation.x =  detection.pose.pose.orientation.x
                 object_pose.pose.orientation.y =  detection.pose.pose.orientation.y
                 object_pose.pose.orientation.z =  detection.pose.pose.orientation.z
