@@ -29,12 +29,12 @@ gripper_open:
 
 # the list of max torque values to apply while closing the gripper around the object
 gripper_joint_efforts:
-    - 1.0
-    - 100.0
-    - 10.0
-    - 10.0
-    - 100.0
-    - 10.0
+    - 1000.0
+    - 1000.0
+    - 1000.0
+    - 1000.0
+    - 1000.0
+    - 1000.0
 
 # The estimated probability of success for this grasp, or some other measure of how 'good' it is.
 grasp_quality: 1.0
