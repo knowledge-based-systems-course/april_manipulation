@@ -13,7 +13,15 @@ Rviz visualisation:
 
 Launch required components:
 
-        roslaunch april_pick_place_object pick_demo.launch
+        roslaunch april_pick_place_object pick_demo.launch model_name:=my_object_name
+
+replace "my_object_name" with any object from `rospack find april_environments`/models
+
+e.g cylinder, insole, etc.
+
+If you need to adjust z spawn height, you can use z_spawn_position:=my_float_value, where my_float_value can be e.g 1.15.
+
+Consider that the height of the table is 1.015 so the passed value should be above that.
 
 Launch pick demo node with appropiate parameters:
 
