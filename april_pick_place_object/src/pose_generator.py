@@ -14,15 +14,7 @@ class PoseGenerator():
     def __init__(self):
 
         # parameters
-        self.roll_step = rospy.get_param('~roll_step', 0.2)
-        self.pitch_step = rospy.get_param('~pitch_step', 0.2)
-        self.yaw_step = rospy.get_param('~yaw_step', 0.2)
-        self.roll_start = rospy.get_param('~roll_start', -0.3) # ~15 degree
-        self.roll_end = rospy.get_param('~roll_end', 0.3) # ~15 degree
-        self.pitch_start = rospy.get_param('~pitch_start', -0.3) # ~15 degree
-        self.pitch_end = rospy.get_param('~pitch_end', 0.3) # ~15 degree
-        self.yaw_start = rospy.get_param('~yaw_start', -0.3) # ~15 degree
-        self.yaw_end = rospy.get_param('~yaw_end', 0.3) # ~15 degree
+        self.spherical_sampling_params = rospy.get_param('~spherical_sampling')
 
         self.pose_array_pub = rospy.Publisher('~poses', PoseArray, queue_size=50)
 
@@ -70,7 +62,7 @@ class PoseGenerator():
         my_list.append(end)
         return self.modify_list_start_from_center(my_list)
 
-    def spherical_sampling(self, original_pose, offset_vector):
+    def spherical_sampling(self, grasp_type, original_pose, offset_vector):
         # offset to object tf
         tf_offset_to_object = tf.transformations.euler_matrix(0, 0, 0)
         tf_offset_to_object[0][3] = offset_vector[0] # x
@@ -94,10 +86,22 @@ class PoseGenerator():
         pose_array_msg.header.frame_id = original_pose.header.frame_id
         pose_array_msg.header.stamp = rospy.Time.now()
         tf_pose = Pose()
+
+        # configure sampling params for a specific object
+        roll_step = self.spherical_sampling_params[grasp_type]['roll_step']
+        pitch_step = self.spherical_sampling_params[grasp_type]['pitch_step']
+        yaw_step = self.spherical_sampling_params[grasp_type]['yaw_step']
+        roll_start = self.spherical_sampling_params[grasp_type]['roll_start']
+        roll_end = self.spherical_sampling_params[grasp_type]['roll_end']
+        pitch_start = self.spherical_sampling_params[grasp_type]['pitch_start']
+        pitch_end = self.spherical_sampling_params[grasp_type]['pitch_end']
+        yaw_start = self.spherical_sampling_params[grasp_type]['yaw_start']
+        yaw_end = self.spherical_sampling_params[grasp_type]['yaw_end']
+
         # sample multiple rotations
-        for roll in self.generate_angles(start=self.roll_start, end=self.roll_end, step=self.roll_step):
-            for pitch in self.generate_angles(start=self.pitch_start, end=self.pitch_end, step=self.pitch_step):
-                for yaw in self.generate_angles(start=self.yaw_start, end=self.yaw_end, step=self.yaw_step):
+        for roll in self.generate_angles(start=roll_start, end=roll_end, step=roll_step):
+            for pitch in self.generate_angles(start=pitch_start, end=pitch_end, step=pitch_step):
+                for yaw in self.generate_angles(start=yaw_start, end=yaw_end, step=yaw_step):
                     # apply rotations to identity matrix
                     nm = tf.transformations.euler_matrix(roll, pitch, yaw) # rpy
 

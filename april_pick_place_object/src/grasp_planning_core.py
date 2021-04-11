@@ -31,10 +31,6 @@ class GraspPlanningCore:
         self.post_grasp_retreat_min_dist = rospy.get_param('~post_grasp_retreat/min_dist')
         self.post_grasp_retreat_desired = rospy.get_param('~post_grasp_retreat/desired')
         self.post_grasp_retreat_axis = rospy.get_param('~post_grasp_retreat/axis')
-        # grasp type
-        self.grasp_orientations = {}
-        self.grasp_orientations['side_grasp'] = rospy.get_param('~side_grasp_orientation')
-        self.grasp_orientations['top_grasp'] = rospy.get_param('~top_grasp_orientation')
 
         self.gripper_open_trajectory = self.make_gripper_trajectory(gripper_open)
         self.gripper_close_trajectory = self.make_gripper_trajectory(gripper_close)
@@ -59,10 +55,9 @@ class GraspPlanningCore:
     def get_object_padding(self):
         return self.object_padding
 
-    def make_grasps_msgs(self, object_name, grasp_pose, end_effector_frame):
+    def make_grasps_msgs(self, object_name, object_pose, end_effector_frame, grasp_type):
         '''
         generate grasp configurations for moveit
-        grasp_pose : The position of the end-effector for the grasp
         '''
 
         # make empty msg of type moveit_msgs/Grasp
@@ -108,7 +103,7 @@ class GraspPlanningCore:
         # NOTE : one could change the orientation and generate more grasps, currently the list has only 1 grasp
 
         # call grasp planner
-        pose_array_msg = self.generate_poses(grasp_pose)
+        pose_array_msg = self.gen_end_effector_grasp_poses(object_name, object_pose, grasp_type)
         # publish poses for visualisation purposes
         self.pose_array_pub.publish(pose_array_msg)
 
@@ -125,7 +120,7 @@ class GraspPlanningCore:
 
         return grasps
 
-    def generate_poses(self, object_pose):
+    def gen_end_effector_grasp_poses(self, object_name, object_pose):
         '''
         virtual method, derive from this class and implement
         '''
@@ -153,6 +148,3 @@ class GraspPlanningCore:
         gripper_translation_msg.min_distance = min_dist
 
         return gripper_translation_msg
-
-    def compute_grasp_orientations(self, grasp_type):
-        return self.grasp_orientations[grasp_type]

@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
 
 import sys
-import copy
+import importlib
 import rospy
-import tf
 import moveit_commander
+import tf
 
 from std_msgs.msg import String
 from std_srvs.srv import Empty
 from cob_perception_msgs.msg import DetectionArray
 from geometry_msgs.msg import PoseStamped
-
+from moveit_msgs.msg import MoveItErrorCodes
 from planning_scene_interface import PlanningSceneInterface # Using file from source! wait until moveit binaries are updated, then delete this line and uncomment next one
 # from moveit_commander import PlanningSceneInterface
-
-from cylinder_grasp import CylinderGrasp # TODO make this import via importlib? and configurable
 
 class PickTools():
     def __init__(self):
@@ -23,23 +21,26 @@ class PickTools():
         arm_group_name = rospy.get_param('~arm_group_name', 'arm')
         hand_group_name = rospy.get_param('~hand_group_name', 'hand')
         arm_goal_tolerance = rospy.get_param('~arm_goal_tolerance', 0.01)
-        self.pick_attempts = rospy.get_param('~pick_attempts', 10)
         planning_time = rospy.get_param('~planning_time', 10.0)
-        self.pregrasp_posture_required = rospy.get_param('~pregrasp_posture_required', True)
+        self.pregrasp_posture_required = rospy.get_param('~pregrasp_posture_required', False)
         self.pregrasp_posture = rospy.get_param('~pregrasp_posture', 'home')
         self.planning_scene_boxes = rospy.get_param('~planning_scene_boxes', [])
         self.clear_planning_scene = rospy.get_param('~clear_planning_scene', False)
+        # configure the desired grasp planner to use
+        import_file = rospy.get_param('~import_file', 'simple_pregrasp_planner')
+        import_class = rospy.get_param('~import_class', 'SimpleGraspPlanner')
+        # TODO: include octomap
 
         # to be able to transform PoseStamped later in the code
         self.transformer = tf.listener.TransformerROS()
 
-        # publications and subscriptions
-        rospy.Subscriber('~event_in', String, self.eventInCB)
-        # TODO: get this values from a service
-        self.grasp_type = 'side_grasp'
-        self.object_name = 'cylinder'
-        self.grasp_instance = CylinderGrasp()
+        # import grasp planner and make object out of it
+        self.grasp_planner = getattr(importlib.import_module(import_file), import_class)()
 
+        # subscriptions and publications
+        rospy.Subscriber('~event_in', String, self.eventInCB)
+        rospy.Subscriber('~grasp_type', String, self.graspTypeCB) # TODO remove, get from actionlib
+        self.grasp_type = 'side_grasp' # TODO remove, get from actionlib
         rospy.Subscriber('/object_recognition/detections', DetectionArray, self.objectRecognitionCB)
         self.event_out_pub = rospy.Publisher('~event_out', String, queue_size=1)
         self.trigger_perception_pub = rospy.Publisher('/object_recognition/event_in', String, queue_size=1)
@@ -53,16 +54,16 @@ class PickTools():
         self.arm.set_goal_tolerance(arm_goal_tolerance)
         self.scene = PlanningSceneInterface()
 
-        # setup publishers for visualisation purposes
-        self.grasp_pose_pub = rospy.Publisher('~visualisation/grasp_pose', PoseStamped, queue_size=1)
-        rospy.sleep(0.5) # give some time for publisher to register
-
         # flag to indicate perception callback was triggered potentially having detected objects
         self.obj_recognition_received = False
         self.detections_msg = None
 
+    def graspTypeCB(self, msg):
+        self.grasp_type = msg.data
+
     def eventInCB(self, msg):
-        self.event_out_pub.publish(self.pick_object(self.object_name))
+        # TODO: task is missing, only object name can be specified now
+        self.event_out_pub.publish(self.pick_object(msg.data, self.grasp_type))
 
     def objectRecognitionCB(self, msg):
         rospy.loginfo('received object recognition data')
@@ -86,9 +87,11 @@ class PickTools():
             object_pose.header.frame_id = reference_frame
         else:
             rospy.logwarn('object detections reference frame not set')
+        recognized_objects = [] # make a list of all recognized objects for debugging purposes
         for detection in obj_recog_msg.detections:
+            recognized_objects.append(detection.label)
             if detection.label == object_name:
-                padding = self.grasp_instance.get_object_padding()
+                padding = self.grasp_planner.get_object_padding()
                 bounding_box_x = detection.bounding_box_lwh.x + padding
                 bounding_box_y = detection.bounding_box_lwh.y + padding
                 bounding_box_z = detection.bounding_box_lwh.z + padding
@@ -97,7 +100,7 @@ class PickTools():
                     object_pose.header.frame_id = detection.pose.header.frame_id
                 if not object_pose.header.frame_id:
                     rospy.logerr('object recognition frame_id not set')
-                    return
+                    return None, None
                 object_pose.pose.position.x =     detection.pose.pose.position.x
                 object_pose.pose.position.y =     detection.pose.pose.position.y
                 # set the collision model 5mm higher to avoid repeated collisions with the surface
@@ -108,8 +111,8 @@ class PickTools():
                 object_pose.pose.orientation.w =  detection.pose.pose.orientation.w
                 return self.transform_pose(object_pose, self.robot.get_planning_frame()),\
                             [bounding_box_x, bounding_box_y, bounding_box_z]
-        rospy.logerr('object to be picked was not perceived')
-        return
+        rospy.logerr(f'object to be picked ({object_name}) was not perceived, perceived objects were : {recognized_objects}')
+        return None, None
 
     def clean_scene(self):
         '''
@@ -142,7 +145,48 @@ class PickTools():
         self.hand.set_named_target(hand_posture_name)
         self.hand.go()
 
-    def pick_object(self, object_name):
+    def print_moveit_error_helper(self, error_code, moveit_error_code, moveit_error_string):
+        '''
+        function that helps print_moveit_error method to have less code
+        '''
+        if error_code == moveit_error_code:
+            rospy.logwarn(f'moveit says : {moveit_error_string}')
+
+    def print_moveit_error(self, error_code):
+        '''
+        receive moveit result, compare with error codes, print what happened
+        '''
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.PLANNING_FAILED, 'PLANNING_FAILED')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.INVALID_MOTION_PLAN, 'INVALID_MOTION_PLAN')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.MOTION_PLAN_INVALIDATED_BY_ENVIRONMENT_CHANGE,\
+                                                                                'MOTION_PLAN_INVALIDATED_BY_ENVIRONMENT_CHANGE')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.CONTROL_FAILED, 'CONTROL_FAILED')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.UNABLE_TO_AQUIRE_SENSOR_DATA, 'UNABLE_TO_AQUIRE_SENSOR_DATA')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.TIMED_OUT, 'TIMED_OUT')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.PREEMPTED, 'PREEMPTED')
+
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.START_STATE_IN_COLLISION, 'START_STATE_IN_COLLISION')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.START_STATE_VIOLATES_PATH_CONSTRAINTS, 'START_STATE_VIOLATES_PATH_CONSTRAINTS')
+
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.GOAL_IN_COLLISION, 'GOAL_IN_COLLISION')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.GOAL_VIOLATES_PATH_CONSTRAINTS, 'GOAL_VIOLATES_PATH_CONSTRAINTS')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.GOAL_CONSTRAINTS_VIOLATED, 'GOAL_CONSTRAINTS_VIOLATED')
+
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.INVALID_GROUP_NAME, 'INVALID_GROUP_NAME')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.INVALID_GOAL_CONSTRAINTS, 'INVALID_GOAL_CONSTRAINTS')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.INVALID_ROBOT_STATE, 'INVALID_ROBOT_STATE')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.INVALID_LINK_NAME, 'INVALID_LINK_NAME')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.INVALID_OBJECT_NAME, 'INVALID_OBJECT_NAME')
+
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.FRAME_TRANSFORM_FAILURE, 'FRAME_TRANSFORM_FAILURE')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.COLLISION_CHECKING_UNAVAILABLE, 'COLLISION_CHECKING_UNAVAILABLE')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.ROBOT_STATE_STALE, 'ROBOT_STATE_STALE')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.SENSOR_INFO_STALE, 'SENSOR_INFO_STALE')
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.COMMUNICATION_FAILURE, 'COMMUNICATION_FAILURE')
+
+        self.print_moveit_error_helper(error_code, MoveItErrorCodes.NO_IK_SOLUTION, 'NO_IK_SOLUTION')
+
+    def pick_object(self, object_name, grasp_type):
         '''
         1) move arm to a position where the attached camera can see the scene (octomap will be populated)
         2) clear octomap
@@ -201,8 +245,10 @@ class PickTools():
             table_pose.pose.orientation.w = planning_scene_box['box_orientation_w']
             self.scene.add_box(planning_scene_box['scene_name'], table_pose, (box_x, box_y, box_z))
 
-        # add an object to be grasped, data is comes from perception
+        # add an object to be grasped, data comes from perception
         object_pose, bounding_box = self.make_object_pose(object_name, self.detections_msg)
+        if not object_pose:
+            return
         self.scene.add_box(object_name, object_pose, (bounding_box[0], bounding_box[1], bounding_box[2]))
 
         # print objects that were added to the planning scene
@@ -211,43 +257,24 @@ class PickTools():
         # ::::::::: pick
         rospy.loginfo(f'picking object now')
 
-        # generate a list of moveit grasp messages
-        grasp_pose = PoseStamped()
-        grasp_pose.header.frame_id = self.robot.get_planning_frame()
-
-        # take position from perceived object
-        translation = [object_pose.pose.position.x, object_pose.pose.position.y, object_pose.pose.position.z]
-        # get gripper rotation from parameters based on the desired semantic grasp type
-        rotation = self.grasp_instance.compute_grasp_orientations(self.grasp_type)
-
-        # grasp pose, this is the pose where you want the end effector to land on
-        grasp_pose.pose.position.x = translation[0]
-        grasp_pose.pose.position.y = translation[1]
-        grasp_pose.pose.position.z = translation[2]
-        grasp_pose.pose.orientation.x = rotation[0]
-        grasp_pose.pose.orientation.y = rotation[1]
-        grasp_pose.pose.orientation.z = rotation[2]
-        grasp_pose.pose.orientation.w = rotation[3]
-        grasps = self.grasp_instance.make_grasps_msgs(object_name, grasp_pose, self.arm.get_end_effector_link())
-
-        # publish grasp pose for visualisation purposes
-        self.grasp_pose_pub.publish(grasp_pose)
+        # generate a list of moveit grasp messages, poses are also published for visualisation purposes
+        grasps = self.grasp_planner.make_grasps_msgs(object_name, object_pose, self.arm.get_end_effector_link(), grasp_type)
 
         # remove octomap, table and object are added manually to planning scene
         # self.clear_octomap()
 
-        # try to pick object, repeat x times if failure
-        for attempt in range(self.pick_attempts):
-            if self.robot.arm.pick(object_name, grasps):
-                rospy.loginfo('moveit grasp object was called and returned')
-                break
-            else:
-                rospy.logerr(f'grasp failed, attempt #{attempt}')
-                rospy.sleep(0.2)
-
-        # give feedback for publication
-        if success:
+        # try to pick object with moveit
+        result = self.robot.arm.pick(object_name, grasps)
+        rospy.loginfo(f'moveit result code: {result}')
+        # lower perception flag
+        self.obj_recognition_received = False
+        # handle moveit pick result
+        if result == MoveItErrorCodes.SUCCESS:
+            rospy.loginfo(f'Successfully picked object')
             return String('e_success')
+        else:
+            rospy.logerr(f'grasp failed')
+            self.print_moveit_error(result)
         return String('e_failure')
 
     def start_pick_node(self):

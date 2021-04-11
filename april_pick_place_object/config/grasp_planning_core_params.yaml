@@ -16,7 +16,7 @@ gripper_close:
     - 1.21   # jMCP3 (middle)
     - 1.19   # jMCP4 (ring)
     - 1.03   # jMCP5 (little)
-    - 0.73   # jmetacarpus (thumb abduction/adduction)
+    - 1.02   # side grasp was: 0.73   # jmetacarpus (thumb abduction/adduction)
 
 # the joint angle value of the gripper when its open
 gripper_open:
@@ -25,7 +25,7 @@ gripper_open:
     - 0.0    # jMCP3 (middle)
     - 0.0    # jMCP4 (ring)
     - 0.0    # jMCP5 (little)
-    - 0.73   # jmetacarpus (thumb abduction/adduction)
+    - 1.02   # side grasp was: 0.73   # jmetacarpus (thumb abduction/adduction)
 
 # the list of max torque values to apply while closing the gripper around the object
 gripper_joint_efforts:
@@ -37,6 +37,7 @@ gripper_joint_efforts:
     - 1000.0
 
 # The estimated probability of success for this grasp, or some other measure of how 'good' it is.
+# for now we set all grasp quality to 1.0, later on this value needs to be taken from the grasp planner
 grasp_quality: 1.0
 
 # the maximum contact force to use while grasping (<=0 to disable)
@@ -58,7 +59,3 @@ post_grasp_retreat:
     min_dist: 0.1
     desired: 0.15
     axis: [0.0, 0.0, 1.0] # lift object up in "z" direction
-
-# the gripper orientation when grasping from the side in quaternion
-side_grasp_orientation: [-0.190164, 0.714782, -0.133767, -0.659568]
-top_grasp_orientation:  [0.057315, -0.987628, 0.136502, -0.051700]

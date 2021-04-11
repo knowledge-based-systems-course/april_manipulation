@@ -10,9 +10,6 @@ hand_group_name: hand
 # if set too low IK is likely to fail, if set too high arm will not reach accurately
 arm_goal_tolerance: 0.01   # default: 0.01
 
-# how many attempts moveit will make to compute a graping plan
-pick_attempts: 10          # default: 10
-
 # timeout for the pick - planning
 planning_time: 10.0        # default: 5.0
 
