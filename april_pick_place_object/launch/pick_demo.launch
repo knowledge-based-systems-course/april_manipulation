@@ -21,13 +21,15 @@
 
   <!-- fake object recognition -->
   <node pkg="fake_object_recognition" type="object_recognition_mockup.py" name="object_recognition" output="screen" >
+    <!-- field of view box parameters -->
     <param name="box_width" type="double" value="1.39" />
     <param name="box_length" type="double" value="0.85" />
     <param name="box_height" type="double" value="0.5" />
-    
     <param name="x_box_position" type="double" value="0.06" />
     <param name="y_box_position" type="double" value="0.69" />
     <param name="z_box_position" type="double" value="1.2" />
+    <!-- objects bounding box parameters -->
+    <rosparam file="$(find fake_object_recognition)/config/object_bounding_boxes.yaml" command="load"/>
   </node>
 
   <!-- moveit move group -->
