@@ -27,7 +27,7 @@ class PickTools():
         self.planning_scene_boxes = rospy.get_param('~planning_scene_boxes', [])
         self.clear_planning_scene = rospy.get_param('~clear_planning_scene', False)
         # configure the desired grasp planner to use
-        import_file = rospy.get_param('~import_file', 'simple_pregrasp_planner')
+        import_file = rospy.get_param('~import_file', 'grasp_planner.simple_pregrasp_planner')
         import_class = rospy.get_param('~import_class', 'SimpleGraspPlanner')
         # TODO: include octomap
 
