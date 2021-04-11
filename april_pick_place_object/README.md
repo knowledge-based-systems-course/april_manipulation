@@ -13,7 +13,7 @@ Rviz visualisation:
 
 Launch required components:
 
-        roslaunch april_pick_place_object pick_demo.launch model_name:=my_object_name
+        roslaunch april_pick_place_object pick_required_components.launch model_name:=my_object_name
 
 replace "my_object_name" with any object from `rospack find april_environments`/models
 
