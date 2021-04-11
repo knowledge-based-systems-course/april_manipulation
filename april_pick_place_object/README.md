@@ -25,7 +25,7 @@ Consider that the height of the table is 1.015 so the passed value should be abo
 
 Launch pick demo node with appropiate parameters:
 
-        roslaunch april_pick_place_object pick.launch
+        roslaunch april_pick_place_object pick_pregrasp_planner.launch
 
 Trigger pick node:
 
