@@ -256,7 +256,7 @@ class RqtGrasp(Plugin):
         ## MOVEIT PICK
 
         # rostopic pub /pick_object_node/event_in std_msgs/String "data: cylinder" --once'
-        self.pregrasp_planner_pub = rospy.Publisher('/pick_object_node/event_in', String, queue_size=1)
+        self.pick_obj_pub = rospy.Publisher('/pick_object_node/event_in', String, queue_size=1)
 
         ## PREGRASP PLANNER --------
 
@@ -292,7 +292,7 @@ class RqtGrasp(Plugin):
         # configure obj pose request
         self.obj_pose_req = SetModelStateRequest()
         # object name and pose in x, y, z, roll, pitch, yaw
-        self.graspable_obj = rospy.get_param('~object', ['cylinder', 0, 0.7, 1.15, 0, 0, 0])
+        self.graspable_obj = rospy.get_param('~object', ['insole', 0, 0.7, 1.15, 0, 0, 0])
         # get obj quaternion from roll, pitch, yaw
         quaternion = tf.transformations.quaternion_from_euler(self.graspable_obj[4], self.graspable_obj[5], self.graspable_obj[6])
         # get obj name and pose from param server, if not found then set example pose by default
@@ -821,8 +821,11 @@ class RqtGrasp(Plugin):
         # get obj quaternion from roll, pitch, yaw (yaw is random, preserve original obj roll and pitch)
         quaternion = tf.transformations.quaternion_from_euler(self.graspable_obj[4], self.graspable_obj[5], random_yaw)
 
+        # take object name from text box
+        obj_to_pick = self._widget.textBox_pick_obj_client_obj_name.toPlainText()
+
         # fill obj pose request
-        random_obj_pose_req.model_state.model_name = self.graspable_obj[0] # preserve original object name
+        random_obj_pose_req.model_state.model_name = obj_to_pick
         random_obj_pose_req.model_state.pose.position.x = random_obj_x
         random_obj_pose_req.model_state.pose.position.y = random_obj_y
         random_obj_pose_req.model_state.pose.position.z = random_obj_z
@@ -830,7 +833,7 @@ class RqtGrasp(Plugin):
         random_obj_pose_req.model_state.pose.orientation.y = quaternion[1]
         random_obj_pose_req.model_state.pose.orientation.z = quaternion[2]
         random_obj_pose_req.model_state.pose.orientation.w = quaternion[3]
-        random_obj_pose_req.model_state.reference_frame = "" # leave it empty, it works...
+        random_obj_pose_req.model_state.reference_frame = 'world'
         self.gazebo_set_obj_pose_srv(random_obj_pose_req)
 
 
@@ -850,8 +853,9 @@ class RqtGrasp(Plugin):
         '''
         rospy.loginfo('trying to grasp object now')
         obj_to_pick = self._widget.textBox_pick_obj_client_obj_name.toPlainText()
+        rospy.loginfo(f'sending request to pick : {obj_to_pick}')
         # send string trigger to topic
-        self.pregrasp_planner_pub.publish(String(obj_to_pick))
+        self.pick_obj_pub.publish(String(obj_to_pick))
 
     def handle_scripts_grasp_5_obj(self):
         '''
