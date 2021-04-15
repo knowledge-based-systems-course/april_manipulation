@@ -51,7 +51,6 @@ class SimpleGraspPlanner(GraspPlanningCore):
         receive object pose, generate multiple poses around it
         '''
         offset_vector = self.object_offset_params[object_name][grasp_type]
-        rospy.logwarn(f'offset vector: {offset_vector}') # remove test
         # take object position and replace its orientation with a prerecorded "example" orientation
         grasp_pose = self.generate_grasp_pose(object_pose, grasp_type)
         pose_array_msg = self.pose_generator.spherical_sampling(grasp_type, grasp_pose, offset_vector)

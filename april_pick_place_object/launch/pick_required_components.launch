@@ -5,8 +5,18 @@
 
   <!-- spawn object to be picked in gazebo world -->
   <arg name="model_name" default="cylinder"/>
-  <include file="$(find april_pick_place_object)/launch/spawn_object.launch" >
+  <!--the height to spawn the object, table height is 1.015m, suggested value is (1.015 + object height / 2.0)-->
+  <arg name="spawn_pose_z" default="1.15"/>
+  <include file="$(find april_use_case_common)/launch/spawn_object.launch" >
+    <arg name="sdf_path" value="$(find april_environments)/models/$(arg model_name)/model.sdf"/>
     <arg name="model_name" value="$(arg model_name)"/>
+    <arg name="spawn_pose_x" value="0.0"/>
+    <arg name="spawn_pose_y" value="0.7"/>
+    <arg name="spawn_pose_z" value="$(arg spawn_pose_z)"/>
+    <arg name="add_uncertainty" value="false"/>
+    <arg name="pkg" value="april_use_case_common"/>
+    <arg name="node_type" value="spawn_object.py"/>
+    <arg name="single_spawn" value="true"/>
   </include>
 
   <!-- fake object recognition -->
