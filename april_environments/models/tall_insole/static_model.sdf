@@ -1,0 +1,51 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name='tall_insole'>
+    <link name='link'>
+      <inertial>
+        <inertia>
+          <ixx>0.005</ixx>
+          <iyy>0.005</iyy>
+          <izz>0.005</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+        <mass>0.2</mass>
+      </inertial>
+      <visual name='tall_insole_visual'>
+        <pose frame=''>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.08 0.15 0.09</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Blue</name>
+          </script>
+        </material>
+      </visual>
+      <collision name='tall_insole_collision'>
+        <pose frame=''>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.08 0.15 0.09</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>20.6</mu>
+              <mu2>20.6</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+    </link>
+
+    <static>1</static>
+    <allow_auto_disable>1</allow_auto_disable>
+  </model>
+</sdf>
