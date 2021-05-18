@@ -256,7 +256,7 @@ class RqtGrasp(Plugin):
         ## MOVEIT PICK
 
         # rostopic pub /pick_object_node/event_in std_msgs/String "data: cylinder" --once'
-        self.pick_obj_pub = rospy.Publisher('/pick_object_node/event_in', String, queue_size=1)
+        self.pick_obj_pub = rospy.Publisher('/mobipick/pick_object_node/event_in', String, queue_size=1)
 
         ## PREGRASP PLANNER --------
 
@@ -292,7 +292,7 @@ class RqtGrasp(Plugin):
         # configure obj pose request
         self.obj_pose_req = SetModelStateRequest()
         # object name and pose in x, y, z, roll, pitch, yaw
-        self.graspable_obj = rospy.get_param('~object', ['insole', 0, 0.7, 1.15, 0, 0, 0])
+        self.graspable_obj = rospy.get_param('~object', ['cylinder', 0, 0.7, 1.15, 0, 0, 0])
         # get obj quaternion from roll, pitch, yaw
         quaternion = tf.transformations.quaternion_from_euler(self.graspable_obj[4], self.graspable_obj[5], self.graspable_obj[6])
         # get obj name and pose from param server, if not found then set example pose by default

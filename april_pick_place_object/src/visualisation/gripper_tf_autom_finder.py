@@ -10,12 +10,21 @@ class GripperFindTransforms:
     '''
     def __init__(self):
         # parameters
-        robot_description = rospy.get_param('~robot_description', 'robot_description')
-        self.required_links = rospy.get_param('~required_links', ['MCP1','MCP4','MCP5','index_finger_sensor','middle_finger_sensor','wrist'])
-        self.end_effector_link = rospy.get_param('~ee_link', 'hand_ee_link')
+        robot_description = rospy.get_param('~robot_description', 'mobipick/robot_description')
+        self.required_links = rospy.get_param('~required_links', ['mobipick/gripper_right_inner_knuckle',
+            'mobipick/gripper_right_outer_knuckle',
+            'mobipick/gripper_left_inner_knuckle',
+            'mobipick/gripper_left_outer_knuckle',
+            'mobipick/gripper_left_outer_finger',
+            'mobipick/gripper_right_outer_finger',
+            'mobipick/gripper_right_inner_finger',
+            'mobipick/gripper_left_inner_finger',
+            'mobipick/gripper_left_robotiq_fingertip_65mm',
+            'mobipick/gripper_right_robotiq_fingertip_65mm'])
+        self.end_effector_link = rospy.get_param('~ee_link', 'mobipick/gripper_tcp')
         self.tf_attempts = rospy.get_param('~tf_attempts', 3)
         # the path where to save the configuration in yaml format
-        self.yaml_path = rospy.get_param('~yaml_path', 'gripper_transformations.yaml')
+        self.yaml_path = rospy.get_param('~yaml_path', 'mobipick_gripper_transformations.yaml')
 
         self.robot = None
         rospy.loginfo('-- parsing urdf --')

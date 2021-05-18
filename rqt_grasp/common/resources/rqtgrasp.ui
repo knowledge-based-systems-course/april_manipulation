@@ -237,7 +237,7 @@
      <bool>false</bool>
     </property>
     <property name="plainText">
-     <string>insole</string>
+     <string>cylinder</string>
     </property>
     <property name="placeholderText">
      <string/>

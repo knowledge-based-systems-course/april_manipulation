@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+    
+    <name>fake_object_recognition</name>
+    <version>0.0.0</version>
+    <description>
+        Features implemented so far:
+        - Octomap generation from pcl config files
+    </description>
+
+    <maintainer email="oscar.lima@dfki.de">Oscar Lima</maintainer>
+
+    <license>BSD</license>
+
+    <author email="oscar.lima@dfki.de">Oscar Lima</author>
+
+    <!-- build dependencies -->
+    <buildtool_depend>catkin</buildtool_depend>
+    <build_depend>dynamic_reconfigure</build_depend>
+
+    <!-- run dependencies -->
+    <run_depend>octomap_server</run_depend>
+    <run_depend>ros_numpy</run_depend>
+    <run_depend>dynamic_reconfigure</run_depend>
+    <run_depend>cob_perception_msgs</run_depend>
+    <run_depend>tf</run_depend>
+
+</package>

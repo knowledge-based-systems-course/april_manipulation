@@ -1,0 +1,16 @@
+# value taken manually from sdf model
+bounding_boxes:
+  cylinder:
+    box_x: 0.06
+    box_y: 0.06
+    box_z: 0.2
+
+  insole:
+    box_x: 0.08
+    box_y: 0.15
+    box_z: 0.03
+
+  tall_insole:
+    box_x: 0.08
+    box_y: 0.15
+    box_z: 0.09

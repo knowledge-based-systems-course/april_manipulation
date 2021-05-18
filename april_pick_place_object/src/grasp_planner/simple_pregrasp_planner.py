@@ -20,6 +20,9 @@ class SimpleGraspPlanner(GraspPlanningCore):
         self.grasp_orientations = rospy.get_param('~grasp_orientations')
         self.object_offset_params = rospy.get_param('~object_offset_params')
 
+        # move object slightly in z up
+        self.z_offset = rospy.get_param('~z_offset', 0.03)
+
         # setup publishers for visualisation purposes
         self.grasp_pose_pub = rospy.Publisher('~visualisation/grasp_pose', PoseStamped, queue_size=1)
         rospy.sleep(0.5) # give some time for publisher to register
@@ -37,7 +40,7 @@ class SimpleGraspPlanner(GraspPlanningCore):
         # grasp pose, this is the pose where you want the end effector to land on
         grasp_pose.pose.position.x = translation[0]
         grasp_pose.pose.position.y = translation[1]
-        grasp_pose.pose.position.z = translation[2]
+        grasp_pose.pose.position.z = translation[2] + self.z_offset
         grasp_pose.pose.orientation.x = rotation[0]
         grasp_pose.pose.orientation.y = rotation[1]
         grasp_pose.pose.orientation.z = rotation[2]

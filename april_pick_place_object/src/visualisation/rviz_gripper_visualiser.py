@@ -18,7 +18,7 @@ class GripperVisualiser:
     '''
     def __init__(self):
         # parameters
-        self.global_reference_frame = rospy.get_param('~global_reference_frame', 'world')
+        self.global_reference_frame = rospy.get_param('~global_reference_frame', 'map')
         self.marker_ns = rospy.get_param('~marker_namespace', 'grasp_poses')
         self.rgb_mesh_color = rospy.get_param('~rgb_mesh_color', [153.0, 102.0, 51.0]) # use 0.0 - 255.0 range
         self.alpha = rospy.get_param('~transparency', 0.5) # the transparency of the mesh, if 1.0 no transparency is set

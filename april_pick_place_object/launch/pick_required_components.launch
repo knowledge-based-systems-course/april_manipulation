@@ -3,51 +3,33 @@
 
   <!-- pick demo using moveit -->
 
-  <!-- spawn object to be picked in gazebo world -->
-  <arg name="model_name" default="cylinder"/>
-  <!--the height to spawn the object, table height is 1.015m, suggested value is (1.015 + object height / 2.0)-->
-  <arg name="spawn_pose_z" default="1.15"/>
-  <include file="$(find april_use_case_common)/launch/spawn_object.launch" >
-    <arg name="sdf_path" value="$(find april_environments)/models/$(arg model_name)/model.sdf"/>
-    <arg name="model_name" value="$(arg model_name)"/>
-    <arg name="spawn_pose_x" value="0.0"/>
-    <arg name="spawn_pose_y" value="0.7"/>
-    <arg name="spawn_pose_z" value="$(arg spawn_pose_z)"/>
-    <arg name="add_uncertainty" value="false"/>
-    <arg name="pkg" value="april_use_case_common"/>
-    <arg name="node_type" value="spawn_object.py"/>
-    <arg name="single_spawn" value="true"/>
-  </include>
-
   <!-- fake object recognition -->
   <node pkg="fake_object_recognition" type="object_recognition_mockup.py" name="object_recognition" output="screen" >
     <!-- field of view box parameters -->
     <param name="box_width" type="double" value="1.39" />
     <param name="box_length" type="double" value="0.85" />
     <param name="box_height" type="double" value="0.5" />
-    <param name="x_box_position" type="double" value="0.06" />
-    <param name="y_box_position" type="double" value="0.69" />
+    <param name="x_box_position" type="double" value="18.0" />
+    <param name="y_box_position" type="double" value="5.0" />
     <param name="z_box_position" type="double" value="1.2" />
     <!-- objects bounding box parameters -->
     <rosparam file="$(find fake_object_recognition)/config/object_bounding_boxes.yaml" command="load"/>
   </node>
 
-  <!-- moveit move group -->
-  <arg name="use_pointcloud" default="true"/>
-  <!-- arm default speed -->
-  <arg name="default_velocity_scaling_factor" default="1.0"/> <!-- fast arm, use it like this only for simulation -->
-  <arg name="default_acceleration_scaling_factor" default="1.0"/> <!-- fast arm, use it like this only for simulation -->
-  <include file="$(find mia_hand_on_ur5_moveit_config)/launch/move_group.launch" >
-    <arg name="use_pointcloud" value="$(arg use_pointcloud)"/>
-    <!-- arm speed -->
-    <arg name="default_velocity_scaling_factor" value="$(arg default_velocity_scaling_factor)"/>
-    <arg name="default_acceleration_scaling_factor" value="$(arg default_acceleration_scaling_factor)"/>
-  </include>
-
   <!-- visualise gripper in rviz as marker -->
-  <node pkg="april_pick_place_object" type="rviz_gripper_visualiser.py" name="rviz_gripper_visualiser" output="screen" >
+  <node pkg="april_pick_place_object" type="rviz_gripper_visualiser.py" name="rviz_gripper_visualiser" output="screen">
     <rosparam file="$(find april_pick_place_object)/config/visualisation/gripper_open_transformations.yaml" command="load" ns="gripper_transformations"/>
-    <remap from="pose_array" to="/pick_object_node/grasp_poses"/>
+    <remap from="pose_array" to="/mobipick/pick_object_node/grasp_poses"/>
+  </node>
+
+  <!-- april analytical pick object script using simple_pregrasp_planner -->
+  <node pkg="april_pick_place_object" type="pick.py" name="pick_object_node" output="screen" ns="mobipick" >
+    <param name="import_file" type="string" value="grasp_planner.simple_pregrasp_planner" />
+    <param name="import_class" type="string" value="SimpleGraspPlanner" />
+    <rosparam file="$(find april_pick_place_object)/config/pick_params.yaml" command="load" />
+    <rosparam file="$(find april_pick_place_object)/config/grasp_planning_core_params.yaml" command="load" />
+    <!-- pregrasp planner parameters -->
+    <rosparam file="$(find april_pick_place_object)/config/grasp_planner/simple_pregrasp_planner_params.yaml" command="load" />
   </node>
 
 </launch>

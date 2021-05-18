@@ -5,6 +5,7 @@ import importlib
 import rospy
 import moveit_commander
 import tf
+from tf import TransformListener
 
 from std_msgs.msg import String
 from std_srvs.srv import Empty
@@ -21,10 +22,11 @@ class PickTools():
         arm_group_name = rospy.get_param('~arm_group_name', 'arm')
         hand_group_name = rospy.get_param('~hand_group_name', 'hand')
         arm_goal_tolerance = rospy.get_param('~arm_goal_tolerance', 0.01)
-        planning_time = rospy.get_param('~planning_time', 10.0)
+        planning_time = rospy.get_param('~planning_time', 20.0)
         self.pregrasp_posture_required = rospy.get_param('~pregrasp_posture_required', False)
         self.pregrasp_posture = rospy.get_param('~pregrasp_posture', 'home')
         self.planning_scene_boxes = rospy.get_param('~planning_scene_boxes', [])
+        #self.planning_scene_boxes = [] # remove
         self.clear_planning_scene = rospy.get_param('~clear_planning_scene', False)
         # configure the desired grasp planner to use
         import_file = rospy.get_param('~import_file', 'grasp_planner.simple_pregrasp_planner')
@@ -32,7 +34,8 @@ class PickTools():
         # TODO: include octomap
 
         # to be able to transform PoseStamped later in the code
-        self.transformer = tf.listener.TransformerROS()
+        #self.transformer = tf.listener.TransformerROS()
+        self.tf_listener = TransformListener()
 
         # import grasp planner and make object out of it
         self.grasp_planner = getattr(importlib.import_module(import_file), import_class)()
@@ -74,7 +77,8 @@ class PickTools():
         '''
         transform a pose from any rerence frame into the target reference frame
         '''
-        return self.transformer.transformPose(target_reference_frame, pose)
+        self.tf_listener.getLatestCommonTime(target_reference_frame, pose.header.frame_id)
+        return self.tf_listener.transformPose(target_reference_frame, pose)
 
     def make_object_pose(self, object_name, obj_recog_msg):
         '''
