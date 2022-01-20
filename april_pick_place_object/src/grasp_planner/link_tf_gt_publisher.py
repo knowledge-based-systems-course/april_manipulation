@@ -21,6 +21,7 @@ class LinkTFgtPublisher:
         self.rate = rospy.Rate(30)
         self.link_state_msg_received = False
         self.tf_broadcaster = tf.TransformBroadcaster()
+        rospy.sleep(0.1)
         rospy.loginfo('link tf ground truth node started')
 
     def LinkStatesCB(self, msg):
