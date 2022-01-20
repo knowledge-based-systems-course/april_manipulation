@@ -25,6 +25,7 @@ class ObjRecognitionMockup:
         # get object bounding box from parameter
         self.bounding_boxes = rospy.get_param('~bounding_boxes', [])
         self.supress_warnings = rospy.get_param('~supress_warnings', False)
+        self.global_reference_frame = rospy.get_param('~global_reference_frame', 'map')
         if self.supress_warnings:
             rospy.logwarn('NOTE: warnings for fake recognition node are supressed!')
         # a box representing an approximation of the fov of the camera
@@ -59,7 +60,7 @@ class ObjRecognitionMockup:
             self.event_out_pub.publish(String('e_not_found'))
             return
         detections_msg = DetectionArray()
-        detections_msg.header.frame_id = 'map'
+        detections_msg.header.frame_id = self.global_reference_frame
         detections_msg.header.stamp = rospy.Time.now()
         # iterate over all gazebo models
         for i, obj_pose in enumerate(self.model_states_msg.pose):
@@ -103,7 +104,7 @@ class ObjRecognitionMockup:
                 # broadcast object tf
                 self.tf_broadcaster.sendTransform((obj_pose.position.x, obj_pose.position.y, obj_pose.position.z),
                     (obj_pose.orientation.x, obj_pose.orientation.y, obj_pose.orientation.z, obj_pose.orientation.w), rospy.Time.now(),
-                    self.model_states_msg.name[i], 'map')
+                    self.model_states_msg.name[i], self.global_reference_frame)
         if len(detections_msg.detections) == 0:
             if not self.supress_warnings:
                 rospy.logwarn('no objects found')
@@ -115,7 +116,7 @@ class ObjRecognitionMockup:
 
     def publish_test_pose(self, config):
         pose_msg = PoseStamped()
-        pose_msg.header.frame_id = 'map'
+        pose_msg.header.frame_id = self.global_reference_frame
         pose_msg.header.stamp = rospy.Time.now()
         pose_msg.pose.position.x = config['test_pose_x']
         pose_msg.pose.position.y = config['test_pose_y']
@@ -133,7 +134,7 @@ class ObjRecognitionMockup:
         this is done for object recognition mockup purposes
         '''
         marker_msg = Marker()
-        marker_msg.header.frame_id = 'map'
+        marker_msg.header.frame_id = self.global_reference_frame
         marker_msg.type = Marker.CUBE
         marker_msg.action = Marker.ADD
         marker_msg.scale.x = config['box_width']
