@@ -100,7 +100,7 @@ class TFGripperListener:
                 stream_list.append(rotation_str)
 
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-                rospy.logerr('LookupTransform failed')
+                rospy.logerr(f'LookupTransform failed between frames: {self.object_ref_frame} and {self.end_effector_link}')
         rospy.loginfo(f'writing to file: {self.file_path}')
         self.write_to_file(stream_list)
 
