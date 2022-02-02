@@ -5,31 +5,33 @@
 
   <!-- fake object recognition -->
   <node pkg="fake_object_recognition" type="object_recognition_mockup.py" name="object_recognition" output="screen" >
+    <param name="supress_warnings" type="bool" value="true" />
+    <param name="objects_desired_reference_frame" type="string" value="map" />
     <!-- field of view box parameters -->
-    <param name="box_width" type="double" value="1.39" />
-    <param name="box_length" type="double" value="0.85" />
-    <param name="box_height" type="double" value="0.5" />
-    <param name="x_box_position" type="double" value="18.0" />
-    <param name="y_box_position" type="double" value="5.0" />
+    <param name="box_width" type="double" value="1.22" />
+    <param name="box_length" type="double" value="1.19" />
+    <param name="box_height" type="double" value="1.12" />
+    <param name="x_box_position" type="double" value="12.8" />
+    <param name="y_box_position" type="double" value="19.0" />
     <param name="z_box_position" type="double" value="1.2" />
     <!-- objects bounding box parameters -->
-    <rosparam file="$(find fake_object_recognition)/config/object_bounding_boxes.yaml" command="load"/>
+    <rosparam file="$(find incorap_sab_demo)/config/object_bounding_boxes.yaml" command="load"/>
   </node>
 
   <!-- visualise gripper in rviz as marker -->
-  <node pkg="april_pick_place_object" type="rviz_gripper_visualiser.py" name="rviz_gripper_visualiser" output="screen">
+  <!--<node pkg="april_pick_place_object" type="rviz_gripper_visualiser.py" name="rviz_gripper_visualiser" output="screen">
     <rosparam file="$(find april_pick_place_object)/config/visualisation/gripper_open_transformations.yaml" command="load" ns="gripper_transformations"/>
     <remap from="pose_array" to="/mobipick/pick_object_node/grasp_poses"/>
-  </node>
+  </node>-->
 
   <!-- april analytical pick object script using simple_pregrasp_planner -->
-  <node pkg="april_pick_place_object" type="pick.py" name="pick_object_node" output="screen" ns="mobipick" >
+  <!--<node pkg="april_pick_place_object" type="pick.py" name="pick_object_node" output="screen" ns="mobipick" >
     <param name="import_file" type="string" value="grasp_planner.simple_pregrasp_planner" />
     <param name="import_class" type="string" value="SimpleGraspPlanner" />
     <rosparam file="$(find april_pick_place_object)/config/pick_params.yaml" command="load" />
-    <rosparam file="$(find april_pick_place_object)/config/grasp_planning_core_params.yaml" command="load" />
+    <rosparam file="$(find april_pick_place_object)/config/grasp_planning_core_params.yaml" command="load" />-->
     <!-- pregrasp planner parameters -->
-    <rosparam file="$(find april_pick_place_object)/config/grasp_planner/simple_pregrasp_planner_params.yaml" command="load" />
-  </node>
+    <!--<rosparam file="$(find april_pick_place_object)/config/grasp_planner/simple_pregrasp_planner_params.yaml" command="load" />
+  </node>-->
 
 </launch>
