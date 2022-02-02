@@ -33,7 +33,7 @@ class ObjRecognitionMockup:
         # the reference frame in which you desire the objects to be in
         self.objects_desired_reference_frame = rospy.get_param('~objects_desired_reference_frame', 'map')
         if self.supress_warnings:
-            rospy.logwarn('NOTE: warnings for fake recognition node are supressed!')
+            rospy.loginfo('NOTE: warnings for fake recognition node are supressed!')
         # a box representing an approximation of the fov of the camera
         self.perception_fov_pub = rospy.Publisher('~cube_fov', Marker, queue_size=1)
         self.test_pose = test_pose
