@@ -12,8 +12,7 @@ from std_srvs.srv import Empty
 from cob_perception_msgs.msg import DetectionArray
 from geometry_msgs.msg import PoseStamped
 from moveit_msgs.msg import MoveItErrorCodes
-from planning_scene_interface import PlanningSceneInterface # Using file from source! wait until moveit binaries are updated, then delete this line and uncomment next one
-# from moveit_commander import PlanningSceneInterface
+from moveit_commander import PlanningSceneInterface
 
 class PickTools():
     def __init__(self):
