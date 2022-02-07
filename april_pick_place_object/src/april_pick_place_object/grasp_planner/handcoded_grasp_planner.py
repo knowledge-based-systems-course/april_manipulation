@@ -6,7 +6,7 @@ import numpy as np
 import rospy
 import tf
 
-from grasp_planning_core import GraspPlanningCore
+from april_pick_place_object.grasp_planning_core import GraspPlanningCore
 from geometry_msgs.msg import Pose, PoseArray
 
 # from pose_generator import PoseGenerator

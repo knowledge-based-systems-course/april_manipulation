@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import rospy
-from grasp_planning_core import GraspPlanningCore
-from pose_generator import PoseGenerator
+from april_pick_place_object.grasp_planning_core import GraspPlanningCore
+from april_pick_place_object.pose_generator import PoseGenerator
 from geometry_msgs.msg import PoseStamped
 
 class SimpleGraspPlanner(GraspPlanningCore):

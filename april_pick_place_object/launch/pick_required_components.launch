@@ -26,7 +26,7 @@
 
   <!-- april analytical pick object script using simple_pregrasp_planner -->
   <node pkg="april_pick_place_object" type="pick.py" name="pick_object_node" output="screen" ns="mobipick" >
-    <param name="import_file" type="string" value="grasp_planner.handcoded_grasp_planner" />
+    <param name="import_file" type="string" value="april_pick_place_object.grasp_planner.handcoded_grasp_planner" />
     <param name="import_class" type="string" value="HandcodedGraspPlanner" />
     <rosparam file="$(find april_pick_place_object)/config/pick_params.yaml" command="load" />
     <rosparam file="$(find april_pick_place_object)/config/grasp_planning_core_params.yaml" command="load" />-->
