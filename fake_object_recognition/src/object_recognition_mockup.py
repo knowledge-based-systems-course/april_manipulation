@@ -30,6 +30,7 @@ class ObjRecognitionMockup:
         # get object bounding box from parameter
         self.bounding_boxes = rospy.get_param('~bounding_boxes', [])
         self.supress_warnings = rospy.get_param('~supress_warnings', False)
+        self.broadcast_object_tf = rospy.get_param('~broadcast_object_tf', True)
         # the reference frame in which you desire the objects to be in
         self.objects_desired_reference_frame = rospy.get_param('~objects_desired_reference_frame', 'map')
         if self.supress_warnings:
@@ -139,10 +140,11 @@ class ObjRecognitionMockup:
                         rospy.logwarn('bounding_boxes parameter not set')
 
                 detections_msg.detections.append(detection)
-                # broadcast object tf
-                self.tf_broadcaster.sendTransform((detection.pose.pose.position.x, detection.pose.pose.position.y, detection.pose.pose.position.z),
-                    (detection.pose.pose.orientation.x, detection.pose.pose.orientation.y, detection.pose.pose.orientation.z, detection.pose.pose.orientation.w),
-                    detection.pose.header.stamp, self.model_states_msg.name[i], self.objects_desired_reference_frame)
+                if self.broadcast_object_tf:
+                    # broadcast object tf
+                    self.tf_broadcaster.sendTransform((detection.pose.pose.position.x, detection.pose.pose.position.y, detection.pose.pose.position.z),
+                        (detection.pose.pose.orientation.x, detection.pose.pose.orientation.y, detection.pose.pose.orientation.z, detection.pose.pose.orientation.w),
+                        detection.pose.header.stamp, self.model_states_msg.name[i], self.objects_desired_reference_frame)
 
         if len(detections_msg.detections) == 0:
             if not self.supress_warnings:

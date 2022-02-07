@@ -6,6 +6,7 @@
   <!-- fake object recognition -->
   <node pkg="fake_object_recognition" type="object_recognition_mockup.py" name="object_recognition" output="screen" >
     <param name="supress_warnings" type="bool" value="true" />
+    <param name="broadcast_object_tf" type="bool" value="false" />
     <param name="objects_desired_reference_frame" type="string" value="map" />
     <!-- field of view box parameters -->
     <param name="box_width" type="double" value="1.22" />
