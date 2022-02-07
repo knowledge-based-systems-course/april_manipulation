@@ -29,6 +29,18 @@ class HandcodedGraspPlanner(GraspPlanningCore):
         rospy.sleep(0.5) # give some time for publisher to register
         rospy.loginfo('handcoded grasp planner object was created')
 
+    def remove_object_id(self, anchored_object_as_string):
+        '''
+        e.g. input  : relay_1
+             output : relay
+        '''
+        count = 0
+        for char in reversed(anchored_object_as_string):
+            count += 1
+            if char == '_':
+                break
+        return anchored_object_as_string[:-count]
+
     def gen_end_effector_grasp_poses(self, object_name, object_pose, grasp_type):
         '''
         receive object pose, generate multiple poses around it
@@ -50,11 +62,15 @@ class HandcodedGraspPlanner(GraspPlanningCore):
         pose_array_msg.header.frame_id = object_pose.header.frame_id
         pose_array_msg.header.stamp = rospy.Time.now()
 
+        # get object class from anchored object
+        object_class = self.remove_object_id(object_name)
+
         # transform all poses from object reference frame to world reference frame
-        if not object_name in self.grasp_poses:
+        if not object_class in self.grasp_poses:
             rospy.logerr('object not found in dictionary, have you included in handcoded_grasp_planner_transforms parameter?')
             return pose_array_msg
-        for transform in self.grasp_poses[object_name]['grasp_poses']:
+
+        for transform in self.grasp_poses[object_class]['grasp_poses']:
             # tf gripper to object
             rot = transform['rotation']
             euler_rot = tf.transformations.euler_from_quaternion(rot)
