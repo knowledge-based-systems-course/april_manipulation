@@ -32,7 +32,7 @@
     <rosparam file="$(find april_pick_place_object)/config/pick_params.yaml" command="load" />
     <rosparam file="$(find april_pick_place_object)/config/grasp_planning_core_params.yaml" command="load" />-->
     <!-- pregrasp planner parameters -->
-    <rosparam file="$(find incorap_sab_demo)/config/grasp_planner/handcoded_grasp_planner/objects/handcoded_grasp_planner_relay.yaml"
+    <rosparam file="$(find incorap_sab_demo)/config/grasp_planner/handcoded_grasp_planner/objects/handcoded_object_grasp_poses.yaml"
               command="load" ns="handcoded_grasp_planner_transforms" />
   </node>
 
