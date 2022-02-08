@@ -25,7 +25,6 @@ class PickTools():
         self.pregrasp_posture_required = rospy.get_param('~pregrasp_posture_required', False)
         self.pregrasp_posture = rospy.get_param('~pregrasp_posture', 'home')
         self.planning_scene_boxes = rospy.get_param('~planning_scene_boxes', [])
-        #self.planning_scene_boxes = [] # remove
         self.clear_planning_scene = rospy.get_param('~clear_planning_scene', False)
         # configure the desired grasp planner to use
         import_file = rospy.get_param('~import_file', 'grasp_planner.simple_pregrasp_planner')
