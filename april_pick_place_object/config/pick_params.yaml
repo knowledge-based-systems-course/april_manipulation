@@ -23,13 +23,13 @@ pregrasp_posture: 'home'
 # a list of boxes to add to the planning scene
 planning_scene_boxes:
   - scene_name: 'table'
-    frame_id: 'map'
-    box_x_dimension: 1.5
+    frame_id: 'world'
+    box_x_dimension: 0.8
     box_y_dimension: 0.8
-    box_z_dimension: 1.015
-    box_position_x: 18.0
-    box_position_y: 5.0
-    box_position_z: 0.5075
+    box_z_dimension: 0.7 # real dimension from sdf: 0.72 but we need to give padding, otherwise it does not work...
+    box_position_x: 0.75
+    box_position_y: 1.0
+    box_position_z: 0.35 # box_z_dimension: 0.72 /2.0 = 0.36 -> + padding = 0.35
     box_orientation_x: 0.0
     box_orientation_y: 0.0
     box_orientation_z: 0.0
