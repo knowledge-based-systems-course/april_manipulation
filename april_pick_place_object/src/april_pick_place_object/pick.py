@@ -60,6 +60,9 @@ class PickTools():
         self.obj_recognition_received = False
         self.detections_msg = None
 
+        # keep memory about the last object we have grasped
+        self.grasped_object = ''
+
     def graspTypeCB(self, msg):
         self.grasp_type = msg.data
 
@@ -189,6 +192,15 @@ class PickTools():
 
         self.print_moveit_error_helper(error_code, MoveItErrorCodes.NO_IK_SOLUTION, 'NO_IK_SOLUTION')
 
+    def detach_all_objects(self):
+        '''
+        usually self.hand.detach_object() should do the trick, however it doesn't work
+        therefore we keep in memory the objects we grasped in the past and deattached them by their name explicitely
+        '''
+        if self.grasped_object != '':
+            self.hand.detach_object(name=self.grasped_object)
+            self.grasped_object = ''
+
     def pick_object(self, object_name, grasp_type):
         '''
         1) move arm to a position where the attached camera can see the scene (octomap will be populated)
@@ -204,7 +216,7 @@ class PickTools():
         self.move_hand_to_posture('open')
 
         # detach (all) object if any from the gripper
-        self.hand.detach_object()
+        self.detach_all_objects()
 
         # flag to keep track of the state of the grasp
         success = False
@@ -264,7 +276,7 @@ class PickTools():
         grasps = self.grasp_planner.make_grasps_msgs(object_name, object_pose, self.arm.get_end_effector_link(), grasp_type)
 
         # remove octomap, table and object are added manually to planning scene
-        # self.clear_octomap()
+        self.clear_octomap()
 
         # try to pick object with moveit
         result = self.robot.arm.pick(object_name, grasps)
@@ -273,7 +285,8 @@ class PickTools():
         self.obj_recognition_received = False
         # handle moveit pick result
         if result == MoveItErrorCodes.SUCCESS:
-            rospy.loginfo(f'Successfully picked object')
+            rospy.loginfo(f'Successfully picked object : {object_name}')
+            self.grasped_object = object_name
             return String('e_success')
         else:
             rospy.logerr(f'grasp failed')
