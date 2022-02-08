@@ -6,11 +6,11 @@ gripper_joint_names:
 
 # the joint angle value of the gripper when its closed
 gripper_close:
-    - 0.04 # 0.05
+    - 0.01   # 0.04 is good enough for multimeter and relay but not for screwdriver
 
 # the joint angle value of the gripper when its open
 gripper_open:
-    - 0.64
+    - 0.6
 
 # the list of max torque values to apply while closing the gripper around the object
 gripper_joint_efforts:
