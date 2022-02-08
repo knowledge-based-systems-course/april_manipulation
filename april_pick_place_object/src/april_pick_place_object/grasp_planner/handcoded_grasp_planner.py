@@ -9,7 +9,7 @@ import tf
 from april_pick_place_object.grasp_planning_core import GraspPlanningCore
 from geometry_msgs.msg import Pose, PoseArray
 
-# from pose_generator import PoseGenerator
+from april_pick_place_object.common_grasp_tools import remove_object_id
 
 class HandcodedGraspPlanner(GraspPlanningCore):
     '''
@@ -21,25 +21,12 @@ class HandcodedGraspPlanner(GraspPlanningCore):
     '''
     def __init__(self):
         super().__init__()
-        # self.pose_generator = PoseGenerator()
 
         # get transforms as a dictionary
         self.grasp_poses = rospy.get_param('~handcoded_grasp_planner_transforms')
 
         rospy.sleep(0.5) # give some time for publisher to register
         rospy.loginfo('handcoded grasp planner object was created')
-
-    def remove_object_id(self, anchored_object_as_string):
-        '''
-        e.g. input  : relay_1
-             output : relay
-        '''
-        count = 0
-        for char in reversed(anchored_object_as_string):
-            count += 1
-            if char == '_':
-                break
-        return anchored_object_as_string[:-count]
 
     def gen_end_effector_grasp_poses(self, object_name, object_pose, grasp_type):
         '''
@@ -63,7 +50,7 @@ class HandcodedGraspPlanner(GraspPlanningCore):
         pose_array_msg.header.stamp = rospy.Time.now()
 
         # get object class from anchored object
-        object_class = self.remove_object_id(object_name)
+        object_class = remove_object_id(object_name)
 
         # transform all poses from object reference frame to world reference frame
         if not object_class in self.grasp_poses:

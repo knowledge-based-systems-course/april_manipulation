@@ -11,6 +11,7 @@ from visualization_msgs.msg import Marker
 from geometry_msgs.msg import PoseStamped
 from gazebo_msgs.msg import ModelStates
 from std_msgs.msg import String
+from april_pick_place_object.common_grasp_tools import remove_object_id
 
 from cob_perception_msgs.msg import Detection, DetectionArray
 
@@ -124,14 +125,15 @@ class ObjRecognitionMockup:
                 detection.pose.pose = copy.deepcopy(pose_msg.pose)
 
                 # get bounding box from parameter yaml file
+                object_class = remove_object_id(model_name) # get object class from anchored object
                 if self.bounding_boxes:
-                    if model_name in self.bounding_boxes:
-                        detection.bounding_box_lwh.x = self.bounding_boxes[model_name]['box_x']
-                        detection.bounding_box_lwh.y = self.bounding_boxes[model_name]['box_y']
-                        detection.bounding_box_lwh.z = self.bounding_boxes[model_name]['box_z']
+                    if object_class in self.bounding_boxes:
+                        detection.bounding_box_lwh.x = self.bounding_boxes[object_class]['box_x']
+                        detection.bounding_box_lwh.y = self.bounding_boxes[object_class]['box_y']
+                        detection.bounding_box_lwh.z = self.bounding_boxes[object_class]['box_z']
                     else:
                         if not self.supress_warnings:
-                            rospy.logwarn(f'model_name: {model_name} bounding box not found in parameters, will leave bb empty')
+                            rospy.logwarn(f'object_class: {object_class} bounding box not found in parameters, will leave bb empty')
                         detection.bounding_box_lwh.x = 0.0
                         detection.bounding_box_lwh.y = 0.0
                         detection.bounding_box_lwh.z = 0.0
